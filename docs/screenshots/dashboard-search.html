@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  .shell { display:flex; min-height:100vh; }
+  .sidebar { width:220px; border-right:1px solid rgb(var(--color-hairline)); background: rgb(var(--color-panel)); padding: 16px 12px; flex-shrink:0; }
+  .brand { font-weight:700; font-size:16px; padding: 4px 10px 18px; }
+  .navitem { display:block; padding:8px 10px; border-radius:6px; font-size:14px; color: rgb(var(--color-slate)); margin-bottom:2px; }
+  .navitem.active { background: rgb(var(--color-signal) / 0.1); color: rgb(var(--color-signal)); font-weight:700; }
+  .main { flex:1; display:flex; flex-direction:column; }
+  .topnav { height:56px; border-bottom:1px solid rgb(var(--color-hairline)); display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:rgb(var(--color-panel)); position:relative; z-index:5; }
+  .search-wrap { position:relative; }
+  .search { display:flex; align-items:center; gap:8px; border:1px solid rgb(var(--color-signal)); border-radius:6px; padding:7px 12px; background:rgb(var(--color-surface)); color:rgb(var(--color-ink)); font-size:13px; width:260px; }
+  .dropdown { position:absolute; top:calc(100% + 4px); left:0; width:380px; background:rgb(var(--color-panel)); border:1px solid rgb(var(--color-hairline)); border-radius:8px; box-shadow: 0 8px 24px -8px rgb(0 0 0 / 0.2); padding:4px 0; }
+  .group-label { padding:8px 12px 4px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:rgb(var(--color-slate)); }
+  .result-row { display:flex; align-items:center; justify-content:space-between; padding:8px 12px; font-size:13.5px; }
+  .result-row:hover { background:rgb(var(--color-surface)); }
+  .result-left { display:flex; align-items:center; gap:8px; color:rgb(var(--color-ink)); }
+  .content { flex:1; padding: 24px; opacity:0.4; }
+  .avatar { width:28px;height:28px;border-radius:999px;background:rgb(var(--color-signal));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700; }
+</style></head>
+<body>
+<div class="aurora-bg"><div class="aurora-blob aurora-blob--1"></div><div class="aurora-blob aurora-blob--2"></div><div class="aurora-blob aurora-blob--3"></div></div>
+<div class="page">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">busigo</div>
+    <a class="navitem active">Dashboard</a>
+    <a class="navitem">Workflows</a>
+    <a class="navitem">Runs</a>
+    <a class="navitem">Connections</a>
+    <a class="navitem">Forms</a>
+    <a class="navitem">Settings</a>
+    <a class="navitem">Billing</a>
+    <a class="navitem">Profile</a>
+    <a class="navitem">Help</a>
+  </aside>
+  <div class="main">
+    <div class="topnav">
+      <div class="search-wrap">
+        <div class="search">🔍 order</div>
+        <div class="dropdown">
+          <div class="group-label">Workflows</div>
+          <div class="result-row"><span class="result-left">⎇ Order sync</span><span class="badge badge-signal">published</span></div>
+          <div class="group-label">Runs</div>
+          <div class="result-row"><span class="result-left">📶 Order sync <span class="text-slate" style="font-size:11.5px;">Jul 30, 8:02 AM</span></span><span class="badge badge-danger">failed</span></div>
+          <div class="result-row"><span class="result-left">📶 Order sync <span class="text-slate" style="font-size:11.5px;">Jul 29, 3:21 PM</span></span><span class="badge badge-signal">success</span></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span>🌙</span>
+        <span style="position:relative;">🔔<span style="position:absolute;top:-4px;right:-6px;background:rgb(var(--color-danger));color:#fff;font-size:9px;border-radius:99px;padding:1px 4px;">2</span></span>
+        <div style="display:flex;align-items:center;gap:8px;"><div class="avatar">A</div><div><div style="font-size:13px;">Ada Reyes</div><div style="font-size:11px;color:rgb(var(--color-slate));">Pro plan</div></div></div>
+      </div>
+    </div>
+    <div class="content">
+      <h1 style="font-size:24px;">Good afternoon, Ada 👋</h1>
+    </div>
+  </div>
+</div>
+</div>
+</body></html>

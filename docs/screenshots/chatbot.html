@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  body { background: rgb(var(--color-canvas)); }
+  .backdrop { position:relative; height:100vh; }
+  .launcher { position:fixed; bottom:20px; right:20px; width:56px;height:56px;border-radius:999px;background:rgb(var(--color-panel));box-shadow:0 8px 24px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;font-size:22px; }
+  .panel { position:fixed; bottom:96px; right:20px; width:360px; border-radius:10px; border:1px solid rgb(var(--color-hairline)); background:rgb(var(--color-panel)); box-shadow:0 20px 50px rgba(0,0,0,.2); overflow:hidden; }
+  .panel-head { display:flex;align-items:center;gap:8px;padding:12px 16px;border-bottom:1px solid rgb(var(--color-hairline));background:rgb(var(--color-surface)); }
+  .mark { width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#2B3A67,#0EA5A0); }
+  .panel-body { padding:14px 16px; height:340px; overflow:hidden; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:82%; padding:9px 12px; border-radius:8px; font-size:13.5px; line-height:1.4; }
+  .msg.bot { background: rgb(var(--color-surface)); align-self:flex-start; }
+  .msg.user { background: rgb(var(--color-signal)); color:#fff; align-self:flex-end; }
+  .suggestions { display:flex; flex-wrap:wrap; gap:6px; }
+  .sugg { border:1px solid rgb(var(--color-hairline)); border-radius:99px; padding:4px 10px; font-size:11.5px; color:rgb(var(--color-slate)); }
+  .panel-input { display:flex; gap:8px; padding:12px; border-top:1px solid rgb(var(--color-hairline)); }
+  .panel-input input { flex:1; border:1px solid rgb(var(--color-hairline)); border-radius:6px; padding:8px 10px; font-size:13px; }
+  .send { width:34px;height:34px;border-radius:6px;background:rgb(var(--color-signal));color:#fff;display:flex;align-items:center;justify-content:center; }
+</style></head>
+<body>
+<div class="aurora-bg"><div class="aurora-blob aurora-blob--1"></div><div class="aurora-blob aurora-blob--2"></div><div class="aurora-blob aurora-blob--3"></div></div>
+<div class="page">
+<div class="backdrop">
+  <div style="position:absolute; top:24px; left:24px; color:rgb(var(--color-slate)); font-size:13px;">busigo dashboard (background)</div>
+  <div class="panel">
+    <div class="panel-head"><div class="mark"></div><div><div style="font-size:13.5px;font-weight:600;">busigo Assistant</div><div style="font-size:11.5px;color:rgb(var(--color-slate));">Knows your workflows &amp; usage</div></div></div>
+    <div class="panel-body">
+      <div class="msg bot">Hi! I'm the busigo Assistant. I can see your plan, workflows, and recent runs — ask me anything about your account, or how to build something.</div>
+      <div class="msg user">Why did my last run fail?</div>
+      <div class="msg bot">Your "Order sync" workflow failed at the HTTP Request step — the endpoint returned a 500. It's happened on your last 2 runs, so the destination API may be down. Want help adding a retry step?</div>
+      <div class="suggestions"><span class="sugg">Which plan fits my usage?</span><span class="sugg">How do credits work?</span></div>
+    </div>
+    <div class="panel-input"><input placeholder="Ask about your workflows..." /><div class="send">➤</div></div>
+  </div>
+  <div class="launcher">✕</div>
+</div>
+</div>
+</body></html>

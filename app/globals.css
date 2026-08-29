@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Keyboard-focus fallback: a visible ring on every interactive element that doesn't already
+   define its own focus-visible treatment (Button and Input do — see their own components;
+   this covers everything else — nav links, icon buttons, custom dropdowns — so tabbing
+   through the app never lands on an element with no visible indicator at all). Scoped to
+   :focus-visible, not :focus, so it only shows for keyboard navigation, not mouse clicks. */
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgb(var(--color-signal));
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ---------------------------------------------------------------------------------------
+   Theme tokens — space-separated RGB triplets (not hex) so Tailwind's alpha modifier
+   (e.g. bg-signal/10) works through the CSS-variable indirection in tailwind.config.ts.
+   Light values are the original "Minimal Corporate AI" palette (now evolved into the Aurora
+   theme — see the .aurora-bg section below); dark is a parallel navy
+   palette, not just an inverted/greyscale one, so brand color (signal/pulse) still reads
+   correctly on a dark background.
+--------------------------------------------------------------------------------------- */
+:root {
+  --color-canvas: 250 250 250;   /* #FAFAFA — page background */
+  --color-surface: 243 244 246;  /* #F3F4F6 — recessed areas */
+  --color-panel: 255 255 255;    /* #FFFFFF — cards, dropdowns, modals */
+  --color-ink: 18 21 28;         /* #12151C — primary text */
+  --color-slate: 107 114 128;    /* #6B7280 — secondary text */
+  --color-hairline: 228 231 235; /* #E4E7EB — borders */
+  --color-signal: 43 58 103;     /* #2B3A67 */
+  --color-signal-dark: 31 42 77; /* #1F2A4D */
+  --color-pulse: 14 165 160;     /* #0EA5A0 */
+  --color-danger: 179 38 30;     /* #B3261E */
+  --color-warn: 154 103 0;       /* #9A6700 */
+  --color-aurora-violet: 124 92 219;  /* #7C5CDB — third aurora hue, light mode */
+  --aurora-opacity: 0.20;
+  --aurora-blur: 90px;
+}
+
+.dark {
+  --color-canvas: 13 17 27;      /* #0D111B */
+  --color-surface: 21 26 39;     /* #151A27 */
+  --color-panel: 24 30 45;       /* #181E2D */
+  --color-ink: 237 239 243;      /* #EDEFF3 */
+  --color-slate: 148 158 178;    /* #949EB2 */
+  --color-hairline: 43 51 71;    /* #2B3347 */
+  --color-signal: 92 116 189;    /* #5C74BD — brightened for contrast on dark */
+  --color-signal-dark: 118 140 204; /* lighter on hover in dark mode, not darker */
+  --color-pulse: 45 201 195;     /* #2DC9C3 */
+  --color-danger: 224 106 98;    /* #E06A62 */
+  --color-warn: 217 164 65;      /* #D9A441 */
+  --color-aurora-violet: 154 130 235; /* #9A82EB — brightened for dark mode */
+  --aurora-opacity: 0.32;
+  --aurora-blur: 110px;
+}
+
+body {
+  background-color: rgb(var(--color-canvas));
+  color: rgb(var(--color-ink));
+  transition: background-color 0.2s ease, color 0.2s ease;
+  position: relative;
+}
+
+/* Bold/simple type direction: strong, confident headings by default. Utility classes on a
+   specific element (e.g. font-semibold) still win where a page sets one explicitly — this is
+   the fallback that keeps anything NOT explicitly styled on-brand. */
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Signature step-list connector line (Design Direction) */
+.step-node {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  border: 2px solid rgb(var(--color-signal));
+  background: rgb(var(--color-canvas));
+  flex-shrink: 0;
+}
+.step-node--done { background: rgb(var(--color-signal)); }
+.step-node--running {
+  background: rgb(var(--color-pulse));
+  border-color: rgb(var(--color-pulse));
+  animation: pulse-node 1.8s ease-in-out infinite;
+}
+.step-node--failed { background: rgb(var(--color-danger)); border-color: rgb(var(--color-danger)); }
+.step-node--stopped { background: rgb(var(--color-warn)); border-color: rgb(var(--color-warn)); }
+.step-connector {
+  width: 1px;
+  flex: 1;
+  background: rgb(var(--color-hairline));
+  min-height: 24px;
+}
+@keyframes pulse-node {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ---------------------------------------------------------------------------------------
+   Shared motion system — small, purposeful, respects prefers-reduced-motion (see above).
+--------------------------------------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  from { background-position: -200% 0; }
+  to { background-position: 200% 0; }
+}
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-fade-in { animation: fadeIn 0.4s ease both; }
+.animate-slide-up { animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.animate-float-slow { animation: floatSlow 6s ease-in-out infinite; }
+
+/* Stagger helper — pair with .animate-slide-up on a list of children */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.1s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.2s; }
+.stagger-5 { animation-delay: 0.25s; }
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    rgb(var(--color-surface)) 25%,
+    rgb(var(--color-hairline)) 37%,
+    rgb(var(--color-surface)) 63%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+  border-radius: 6px;
+}
+
+/* ---------------------------------------------------------------------------------------
+   Aurora background — fixed, full-viewport, behind all content (see AuroraBackground.tsx,
+   mounted once in the root layout so it's consistent across the public site AND the
+   dashboard). Three large blurred, slowly-drifting color blobs in the brand hues (signal
+   blue, pulse teal) plus one violet accent for the fuller "aurora" feel. Blur + low opacity
+   keep it strictly ambient — legible text and white "floating" cards are the point, not the
+   background itself. Respects prefers-reduced-motion (media query at the top of this file
+   freezes the drift animation along with everything else).
+--------------------------------------------------------------------------------------- */
+.aurora-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurora-blob {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(var(--aurora-blur));
+  opacity: var(--aurora-opacity);
+  will-change: transform;
+}
+.aurora-blob--1 {
+  top: -10%; left: -5%; width: 55vw; height: 55vw;
+  background: rgb(var(--color-signal));
+  animation: aurora-drift-1 26s ease-in-out infinite;
+}
+.aurora-blob--2 {
+  top: 10%; right: -10%; width: 48vw; height: 48vw;
+  background: rgb(var(--color-pulse));
+  animation: aurora-drift-2 32s ease-in-out infinite;
+}
+.aurora-blob--3 {
+  bottom: -15%; left: 20%; width: 50vw; height: 50vw;
+  background: rgb(var(--color-aurora-violet));
+  animation: aurora-drift-3 29s ease-in-out infinite;
+}
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(6%, 8%) scale(1.08); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-8%, 6%) scale(1.1); }
+}
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(5%, -7%) scale(1.05); }
+}
+
+/* Floating white card — used for the marketing hero and any card that should read as sitting
+   above the aurora, not just bordered. Card.tsx uses this by default now. */
+.shadow-float {
+  box-shadow: 0 1px 2px rgb(var(--color-ink) / 0.04), 0 8px 24px -8px rgb(var(--color-ink) / 0.12);
+}
+.dark .shadow-float {
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -8px rgb(0 0 0 / 0.5);
+}
+

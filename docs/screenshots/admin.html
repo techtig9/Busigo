@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  .shell { display:flex; min-height:100vh; }
+  .sidebar { width:220px; border-right:1px solid rgb(var(--color-hairline)); background: rgb(var(--color-panel)); padding: 16px 12px; }
+  .brand { font-weight:600; font-size:16px; padding: 4px 10px 18px; }
+  .navitem { display:block; padding:8px 10px; border-radius:6px; font-size:14px; color: rgb(var(--color-slate)); margin-bottom:2px; }
+  .navitem.active { background: rgb(var(--color-signal) / 0.1); color: rgb(var(--color-signal)); font-weight:500; }
+  .content { flex:1; padding: 24px 32px; }
+  .inner { max-width: 820px; margin: 0 auto; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th,td { text-align:left; padding:9px 10px; border-bottom:1px solid rgb(var(--color-hairline)); }
+  th { color:rgb(var(--color-slate)); font-weight:500; font-size:12px; }
+  select { border:1px solid rgb(var(--color-hairline)); border-radius:6px; padding:4px 8px; font-size:12px; background:rgb(var(--color-panel)); color:rgb(var(--color-ink)); }
+</style></head>
+<body>
+<div class="aurora-bg"><div class="aurora-blob aurora-blob--1"></div><div class="aurora-blob aurora-blob--2"></div><div class="aurora-blob aurora-blob--3"></div></div>
+<div class="page">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">busigo</div>
+    <a class="navitem">Dashboard</a><a class="navitem">Workflows</a><a class="navitem">Runs</a>
+    <a class="navitem">Connections</a><a class="navitem">Forms</a><a class="navitem">Settings</a>
+    <a class="navitem">Billing</a><a class="navitem">Profile</a><a class="navitem">Help</a>
+    <a class="navitem active" style="margin-top:10px;border-top:1px solid rgb(var(--color-hairline));padding-top:12px;">Admin</a>
+  </aside>
+  <div class="content"><div class="inner">
+    <h1 style="font-size:20px;">Admin — Users &amp; Subscriptions</h1>
+    <div class="card" style="padding:0;overflow:hidden;">
+      <table>
+        <tr><th>User</th><th>Email</th><th>Plan</th><th>Credits</th><th>Status</th><th></th></tr>
+        <tr><td>Ada Reyes</td><td class="text-slate">ada@example.com</td><td><select><option>pro</option></select></td><td>51,200</td><td><span class="badge badge-signal">active</span></td><td class="text-signal">Save</td></tr>
+        <tr><td>Miguel Santos</td><td class="text-slate">miguel@example.com</td><td><select><option>growth</option></select></td><td>18,400</td><td><span class="badge badge-signal">active</span></td><td class="text-signal">Save</td></tr>
+        <tr><td>Priya Nair</td><td class="text-slate">priya@example.com</td><td><select><option>free</option></select></td><td>500</td><td><span class="badge badge-signal">active</span></td><td class="text-signal">Save</td></tr>
+        <tr><td>Devon Blake</td><td class="text-slate">devon@example.com</td><td><select><option>enterprise</option></select></td><td>250,000</td><td><span class="badge badge-warn">past_due</span></td><td class="text-signal">Save</td></tr>
+      </table>
+    </div>
+  </div></div>
+</div>
+</div>
+</body></html>

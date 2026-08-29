@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="dark">
+<head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  .shell { display:flex; min-height:100vh; }
+  .sidebar { width:220px; border-right:1px solid rgb(var(--color-hairline)); background: rgb(var(--color-panel)); padding: 16px 12px; flex-shrink:0; }
+  .sidebar .brand { font-weight:600; font-size:16px; padding: 4px 10px 18px; }
+  .navitem { display:block; padding:8px 10px; border-radius:6px; font-size:14px; color: rgb(var(--color-slate)); margin-bottom:2px; }
+  .navitem.active { background: rgb(var(--color-signal) / 0.1); color: rgb(var(--color-signal)); font-weight:500; }
+  .main { flex:1; display:flex; flex-direction:column; }
+  .topnav { height:56px; border-bottom:1px solid rgb(var(--color-hairline)); display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:rgb(var(--color-panel)); }
+  .search { display:flex; align-items:center; gap:8px; border:1px solid rgb(var(--color-hairline)); border-radius:6px; padding:6px 12px; background:rgb(var(--color-surface)); color:rgb(var(--color-slate)); font-size:13px; width:220px;}
+  .content { flex:1; padding: 24px; }
+  .inner { max-width: 900px; margin: 0 auto; }
+  .greet-row { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+  .onboard { border-color: rgb(var(--color-signal) / 0.3); background: rgb(var(--color-signal) / 0.05); margin-bottom:16px; }
+  .progress { height:6px; border-radius:99px; background:rgb(var(--color-surface)); overflow:hidden; margin: 10px 0; }
+  .progress > div { height:100%; background: rgb(var(--color-signal)); }
+  .step-row { display:flex; align-items:center; gap:8px; padding:5px 0; font-size:14px; }
+  .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:16px; }
+  .stat-label { font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:rgb(var(--color-slate)); font-weight:600; }
+  .stat-value { font-size:24px; font-weight:600; margin-top:4px; }
+  .runs-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgb(var(--color-hairline)); font-size:14px; }
+  .runs-row:last-child { border-bottom:none; }
+  .avatar { width:28px;height:28px;border-radius:999px;background:rgb(var(--color-signal));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600; }
+</style></head>
+<body>
+<div class="aurora-bg"><div class="aurora-blob aurora-blob--1"></div><div class="aurora-blob aurora-blob--2"></div><div class="aurora-blob aurora-blob--3"></div></div>
+<div class="page">
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand">busigo</div>
+    <a class="navitem active">Dashboard</a>
+    <a class="navitem">Workflows</a>
+    <a class="navitem">Runs</a>
+    <a class="navitem">Connections</a>
+    <a class="navitem">Forms</a>
+    <a class="navitem">Settings</a>
+    <a class="navitem">Billing</a>
+    <a class="navitem">Profile</a>
+    <a class="navitem">Help</a>
+  </aside>
+  <div class="main">
+    <div class="topnav">
+      <div class="search">🔍 Search workflows, runs...</div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span>☀️</span>
+        <span style="position:relative;">🔔<span style="position:absolute;top:-4px;right:-6px;background:rgb(var(--color-danger));color:#fff;font-size:9px;border-radius:99px;padding:1px 4px;">2</span></span>
+        <div style="display:flex;align-items:center;gap:8px;"><div class="avatar">A</div><div><div style="font-size:13px;">Ada Reyes</div><div style="font-size:11px;color:rgb(var(--color-slate));">Pro plan</div></div></div>
+      </div>
+    </div>
+    <div class="content"><div class="inner">
+      <div class="greet-row">
+        <div><h1 style="font-size:24px;margin:0;">Good afternoon, Ada 👋</h1><p class="text-slate" style="margin:4px 0 0;font-size:14px;">Here's what's happening with your workflows.</p></div>
+        <span class="btn btn-primary">New workflow</span>
+      </div>
+      <div class="card onboard">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><strong style="font-size:14px;">Getting started</strong><span class="text-slate" style="font-size:12px;">2/3</span></div>
+        <div class="progress"><div style="width:66%;"></div></div>
+        <div class="step-row">✅ <span style="color:rgb(var(--color-slate));text-decoration:line-through;">Create your first workflow</span></div>
+        <div class="step-row">✅ <span style="color:rgb(var(--color-slate));text-decoration:line-through;">Publish it</span></div>
+        <div class="step-row">⭘ <span>Trigger a test run</span></div>
+      </div>
+      <div class="stats-grid">
+        <div class="card"><div class="stat-label">Workflows</div><div class="stat-value">4</div></div>
+        <div class="card"><div class="stat-label">Plan</div><div class="stat-value">Pro</div></div>
+        <div class="card"><div class="stat-label">Credits remaining</div><div class="stat-value">51,200 <span style="font-size:13px;font-weight:400;color:rgb(var(--color-slate));">/ 63,000</span></div><div class="progress"><div style="width:81%;"></div></div></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><strong style="font-size:14px;">Recent runs</strong><span class="text-signal" style="font-size:13px;">View all</span></div>
+        <div class="runs-row"><div><div>New signup → Slack alert</div><div class="text-slate" style="font-size:12px;">Jul 30, 9:14 AM</div></div><span class="badge badge-signal">success</span></div>
+        <div class="runs-row"><div><div>Order sync</div><div class="text-slate" style="font-size:12px;">Jul 30, 8:02 AM</div></div><span class="badge badge-danger">failed</span></div>
+        <div class="runs-row"><div><div>Support ticket triage</div><div class="text-slate" style="font-size:12px;">Jul 29, 6:47 PM</div></div><span class="badge badge-warn">stopped_by_filter</span></div>
+      </div>
+    </div></div>
+  </div>
+</div>
+</div>
+</body></html>

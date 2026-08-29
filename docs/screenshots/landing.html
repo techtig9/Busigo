@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><link rel="stylesheet" href="shared.css">
+<style>
+  header { position: sticky; top:0; border-bottom:1px solid rgb(var(--color-hairline)); background: rgb(var(--color-panel) / 0.9); backdrop-filter: blur(6px); }
+  .nav-wrap { max-width: 1100px; margin: 0 auto; display:flex; align-items:center; justify-content:space-between; padding: 16px 24px; }
+  .nav-links { display:flex; align-items:center; gap:20px; font-size:14px; }
+  .hero { text-align:center; padding: 90px 24px 70px; background:
+    radial-gradient(circle at 15% 20%, rgb(var(--color-signal) / 0.07), transparent 45%),
+    radial-gradient(circle at 85% 15%, rgb(var(--color-pulse) / 0.10), transparent 40%); }
+  .hero h1 { font-size: 46px; margin: 14px 0 10px; letter-spacing:-0.02em; }
+  .hero p.lead { max-width: 620px; margin: 0 auto; color: rgb(var(--color-slate)); font-size:18px; }
+  .hero-ctas { margin-top: 28px; display:flex; gap:12px; justify-content:center; }
+  .features { background: rgb(var(--color-surface)); padding: 60px 24px; }
+  .features-grid { max-width: 1000px; margin: 0 auto; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .feature-card h3 { margin: 12px 0 6px; font-size:15px; }
+  .feature-card p { margin:0; color: rgb(var(--color-slate)); font-size: 13.5px; line-height:1.5; }
+  .pricing-preview { text-align:center; padding: 60px 24px; }
+  .plan-row { max-width: 700px; margin: 28px auto 0; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .plan-mini { border:1px solid rgb(var(--color-hairline)); border-radius:8px; padding:16px; background: rgb(var(--color-panel)); }
+</style></head>
+<body>
+<div class="aurora-bg"><div class="aurora-blob aurora-blob--1"></div><div class="aurora-blob aurora-blob--2"></div><div class="aurora-blob aurora-blob--3"></div></div>
+<div class="page">
+<header><div class="nav-wrap">
+  <div style="font-weight:600;font-size:17px;">busigo</div>
+  <div class="nav-links">
+    <span class="text-slate">Pricing</span><span class="text-slate">About</span><span class="text-slate">Help</span>
+    <span style="border-radius:999px;width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;">🌙</span>
+    <span class="text-slate">Log in</span>
+    <span class="btn btn-primary">Sign up free</span>
+  </div>
+</div></header>
+
+<section class="hero">
+  <div style="font-size:13px;font-weight:600;color:rgb(var(--color-signal));">Good afternoon — let's automate something.</div>
+  <h1>Trustworthy workflow automation.</h1>
+  <p class="lead">busigo connects a trigger to a sequence of real, traceable steps — with no silently-dropped steps and no runs that claim success when they didn't.</p>
+  <div class="hero-ctas">
+    <span class="btn btn-primary">Start free — no card required →</span>
+    <span class="btn btn-secondary">See pricing</span>
+  </div>
+</section>
+
+<section class="features">
+  <div class="features-grid">
+    <div class="card feature-card"><div class="text-signal" style="font-size:20px;">⎇</div><h3>Trigger, sequence, done</h3><p>Webhook, schedule, or public form triggers feeding an ordered list of steps — HTTP requests, emails, AI actions, filters, delays, and data transforms.</p></div>
+    <div class="card feature-card"><div class="text-signal" style="font-size:20px;">🛡</div><h3>Built-in guardrails</h3><p>SSRF protection, self-trigger loop guards, rate limiting, and prompt-injection-safe AI actions — the boring, essential stuff most automation tools skip.</p></div>
+    <div class="card feature-card"><div class="text-signal" style="font-size:20px;">✦</div><h3>An assistant that knows your account</h3><p>The built-in Assistant sees your real workflows, credit usage, and recent run failures — so it can actually help you decide what to fix or build next.</p></div>
+  </div>
+</section>
+
+<section class="pricing-preview">
+  <h2 style="font-size:22px;">Plans that scale with real usage</h2>
+  <p class="text-slate" style="font-size:14px;">Start free. Upgrade only when you need more credits, steps, or app connections.</p>
+  <div class="plan-row">
+    <div class="plan-mini"><div style="font-size:14px;">Starter</div><div style="font-size:24px;font-weight:600;">$19<span style="font-size:13px;font-weight:400;color:rgb(var(--color-slate));">/mo</span></div><div class="text-slate" style="font-size:12px;">15,000 credits</div></div>
+    <div class="plan-mini"><div style="font-size:14px;">Growth</div><div style="font-size:24px;font-weight:600;">$39<span style="font-size:13px;font-weight:400;color:rgb(var(--color-slate));">/mo</span></div><div class="text-slate" style="font-size:12px;">31,000 credits</div></div>
+    <div class="plan-mini"><div style="font-size:14px;">Pro</div><div style="font-size:24px;font-weight:600;">$79<span style="font-size:13px;font-weight:400;color:rgb(var(--color-slate));">/mo</span></div><div class="text-slate" style="font-size:12px;">63,000 credits</div></div>
+  </div>
+</section>
+</div>
+</body></html>
