@@ -19,8 +19,8 @@ export default function PrivacyPage() {
           <h2 className="font-bold">How we use it</h2>
           <p className="mt-1 text-slate">
             To run the platform: executing your workflows, metering credit usage against your
-            plan, sending failure-alert emails, and powering the in-app Assistant's answers about
-            your own account. We don't sell your data.
+            plan, sending failure-alert emails, and powering the in-app Assistant&apos;s answers about
+            your own account. We don&apos;t sell your data.
           </p>
         </section>
         <section>
@@ -35,8 +35,8 @@ export default function PrivacyPage() {
         <section>
           <h2 className="font-bold">Your AI Action data</h2>
           <p className="mt-1 text-slate">
-            Content you configure into an AI Action step is sent to Anthropic's API to generate
-            that step's output. It's treated as untrusted input on our side (see our engineering
+            Content you configure into an AI Action step is sent to Anthropic&apos;s API to generate
+            that step&apos;s output. It&apos;s treated as untrusted input on our side (see our engineering
             notes on prompt-injection defense) and is not used by us to train any model.
           </p>
         </section>

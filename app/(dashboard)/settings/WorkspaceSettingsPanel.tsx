@@ -178,11 +178,11 @@ function ApiKeysCard({ apiKeys }: { apiKeys: ApiKeyRow[] }) {
   return (
     <Card>
       <h2 className="font-bold text-ink">API keys</h2>
-      <p className="mt-1 text-xs text-slate">Security Admins only. A new key's full value is shown once — copy it now.</p>
+      <p className="mt-1 text-xs text-slate">Security Admins only. A new key&apos;s full value is shown once — copy it now.</p>
 
       {revealed && (
         <div className="mt-3 rounded border border-signal bg-signal/5 p-3 text-sm">
-          <p className="font-semibold text-ink">Copy this now — it won't be shown again:</p>
+          <p className="font-semibold text-ink">Copy this now — it won&apos;t be shown again:</p>
           <code className="mt-1 block break-all text-xs text-ink">{revealed}</code>
         </div>
       )}
@@ -253,6 +253,11 @@ function MfaCard({ factors }: { factors: MfaFactor[] }) {
         </Button>
       ) : (
         <div className="mt-3 space-y-2 rounded border border-hairline p-3">
+          {/* Deliberately a plain <img>, not next/image: this src is a base64 data: URI
+              generated per-enrollment by Supabase MFA, never a remote asset. next/image's
+              optimizer has nothing to optimize on a data URI and would need `unoptimized`
+              anyway, so it would add indirection without any LCP or bandwidth benefit. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={enrollment.qrCode} alt="Scan with your authenticator app" className="h-40 w-40" />
           <p className="text-xs text-slate">Or enter manually: <code>{enrollment.secret}</code></p>
           <div className="flex gap-2">

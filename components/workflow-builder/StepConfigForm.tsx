@@ -120,7 +120,7 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
               </div>
             )}
           </div>
-          <p className="text-xs text-slate">If this doesn't pass, the run ends as "stopped by filter" — not a failure.</p>
+          <p className="text-xs text-slate">If this doesn&apos;t pass, the run ends as &quot;stopped by filter&quot; — not a failure.</p>
         </div>
       );
 
@@ -173,7 +173,7 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
           )}
           <MergeableField label="Input data" value={cfg.input} onChange={(v) => set({ input: v })} availableRefs={availableRefs} multiline placeholder="{{trigger.message}}" />
           <p className="text-xs text-slate">
-            This data is sent to Claude wrapped as untrusted input — it's never treated as instructions, even if it tries to look like one.
+            This data is sent to Claude wrapped as untrusted input — it&apos;s never treated as instructions, even if it tries to look like one.
           </p>
         </div>
       );

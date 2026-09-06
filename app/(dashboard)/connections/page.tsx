@@ -43,7 +43,7 @@ export default async function ConnectionsPage() {
         <h1 className="text-2xl font-bold text-ink">Connections</h1>
         <p className="mt-1 text-sm text-slate">
           Real app connections are on the near-term roadmap (Phase 2). Join the waitlist for the ones you need and
-          we'll notify you when they're live.
+          we&apos;ll notify you when they&apos;re live.
           {!allowed && " App connections require the Pro plan."}
         </p>
       </div>

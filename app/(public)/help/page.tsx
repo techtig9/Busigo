@@ -48,7 +48,7 @@ export default function HelpPage() {
         </div>
       </div>
       <p className="mt-6 text-sm text-slate">
-        Curious who's behind busigo?{" "}
+        Curious who&apos;s behind busigo?{" "}
         <Link href="/about" className="text-signal hover:underline">
           Read About Us
         </Link>

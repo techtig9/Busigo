@@ -156,7 +156,7 @@ export function WorkflowBuilder({ workflow, versions, form, aiActionAllowed }: P
         <Card>
           <h2 className="mb-3 font-bold text-ink">Test run</h2>
           <p className="mb-3 text-xs text-slate">
-            Runs against the currently saved definition. Save your draft first if you've made changes.
+            Runs against the currently saved definition. Save your draft first if you&apos;ve made changes.
           </p>
           <TestRunPanel workflowId={workflow.id} steps={flatStepsForTestPanel} onLiveUpdate={setLiveStatuses} />
         </Card>

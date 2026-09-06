@@ -27,7 +27,7 @@ export default function PricingPage() {
       <div className="mx-auto max-w-2xl text-center animate-slide-up">
         <h1 className="text-3xl font-bold text-ink sm:text-4xl">Simple, credit-based pricing</h1>
         <p className="mt-3 text-slate">
-          Every plan includes a generous monthly credit allowance. You're only charged when a
+          Every plan includes a generous monthly credit allowance. You&apos;re only charged when a
           workflow run actually completes — never for a run that fails.
         </p>
       </div>

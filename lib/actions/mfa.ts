@@ -132,7 +132,7 @@ export async function verifyLoginChallengeAction(factorId: string, code: string)
  * against a live Supabase project in this environment — test this path against a real
  * project before relying on it.
  */
-export async function useRecoveryCodeAtLoginAction(code: string): Promise<ActionResult> {
+export async function redeemRecoveryCodeAtLoginAction(code: string): Promise<ActionResult> {
   const supabase = createServerSupabase();
   const {
     data: { user },

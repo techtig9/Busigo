@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input, Label } from "@/components/ui/Input";
-import { checkMfaChallengeNeededAction, verifyLoginChallengeAction, useRecoveryCodeAtLoginAction } from "@/lib/actions/mfa";
+import { checkMfaChallengeNeededAction, verifyLoginChallengeAction, redeemRecoveryCodeAtLoginAction } from "@/lib/actions/mfa";
 import { signOutAction } from "@/lib/actions/auth";
 
 export function MfaChallengeForm() {
@@ -31,7 +31,7 @@ export function MfaChallengeForm() {
       const result =
         mode === "totp" && factorId
           ? await verifyLoginChallengeAction(factorId, code)
-          : await useRecoveryCodeAtLoginAction(code);
+          : await redeemRecoveryCodeAtLoginAction(code);
       if (result.error) {
         setError(result.error);
         return;
@@ -70,7 +70,7 @@ export function MfaChallengeForm() {
             <Label>Recovery code</Label>
             <Input value={code} onChange={(e) => setCode(e.target.value)} autoFocus placeholder="xxxxx-xxxxx" />
             <p className="mt-1 text-xs text-slate">
-              Using a recovery code removes two-factor authentication from your account — you'll be prompted to set it
+              Using a recovery code removes two-factor authentication from your account — you&apos;ll be prompted to set it
               up again from Settings.
             </p>
           </div>

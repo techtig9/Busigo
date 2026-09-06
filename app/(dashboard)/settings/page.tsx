@@ -49,8 +49,8 @@ export default async function SettingsPage() {
             emails you, naming the step that failed.
           </li>
           <li>
-            <span className="font-semibold text-ink">Credit renewal —</span> your {planLabel((sub?.plan as any) || "free")} plan's
-            credits reset at the start of each billing cycle; unused credits don't roll over.
+            <span className="font-semibold text-ink">Credit renewal —</span> your {planLabel((sub?.plan as any) || "free")} plan&apos;s
+            credits reset at the start of each billing cycle; unused credits don&apos;t roll over.
           </li>
           <li>
             <span className="font-semibold text-ink">Trigger rate limit —</span> each workflow accepts up to 30

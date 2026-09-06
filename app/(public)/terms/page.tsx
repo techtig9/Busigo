@@ -19,16 +19,16 @@ export default function TermsPage() {
           <h2 className="font-bold">2. Your workflows and data</h2>
           <p className="mt-1 text-slate">
             You retain ownership of the workflows you create and the data that flows through
-            them. You're responsible for the destinations you send data to (via HTTP Request or
+            them. You&apos;re responsible for the destinations you send data to (via HTTP Request or
             Send Email steps) and for having the right to send data you configure into a workflow.
           </p>
         </section>
         <section>
           <h2 className="font-bold">3. Acceptable use</h2>
           <p className="mt-1 text-slate">
-            Don't use busigo to send unsolicited bulk email, attempt to bypass the platform's
+            Don&apos;t use busigo to send unsolicited bulk email, attempt to bypass the platform&apos;s
             rate limits or SSRF protections, or build workflows intended to abuse a third-party
-            service's terms of use.
+            service&apos;s terms of use.
           </p>
         </section>
         <section>
@@ -42,7 +42,7 @@ export default function TermsPage() {
         <section>
           <h2 className="font-bold">5. Service availability</h2>
           <p className="mt-1 text-slate">
-            busigo is provided "as is." We work to keep the platform reliable but don't guarantee
+            busigo is provided &quot;as is.&quot; We work to keep the platform reliable but don&apos;t guarantee
             uninterrupted availability outside of any Enterprise SLA agreed separately in writing.
           </p>
         </section>

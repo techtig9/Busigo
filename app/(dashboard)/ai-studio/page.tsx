@@ -88,7 +88,7 @@ export default async function AIStudioPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <h2 className="font-semibold text-ink">Real AI, real failover</h2>
-          <p className="mt-2 text-sm text-slate">Four-provider routing with structured JSON output and business context — see the table above for what's actually happening right now.</p>
+          <p className="mt-2 text-sm text-slate">Four-provider routing with structured JSON output and business context — see the table above for what&apos;s actually happening right now.</p>
         </Card>
         <Card>
           <h2 className="font-semibold text-ink">Connected execution</h2>

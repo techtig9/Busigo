@@ -42,7 +42,7 @@ export default async function BillingPage() {
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-ink">Billing</h1>
-        <p className="mt-1 text-sm text-slate">{workspace.name}'s plan and credits — shared by every member of this workspace.</p>
+        <p className="mt-1 text-sm text-slate">{workspace.name}&apos;s plan and credits — shared by every member of this workspace.</p>
       </div>
 
       <Card className="transition-shadow hover:shadow-md">
@@ -64,7 +64,7 @@ export default async function BillingPage() {
 
       {!canManageBilling && (
         <p className="rounded border border-hairline bg-surface px-4 py-3 text-sm text-slate">
-          You can see this workspace's plan and usage, but only an Owner, Admin, or Billing Admin can change the plan or buy credits.
+          You can see this workspace&apos;s plan and usage, but only an Owner, Admin, or Billing Admin can change the plan or buy credits.
         </p>
       )}
 
@@ -87,7 +87,7 @@ export default async function BillingPage() {
 
           <Card>
             <h2 className="mb-1 font-bold text-ink">Buy extra credits</h2>
-            <p className="mb-3 text-xs text-slate">Available any time your monthly allocation runs out — doesn't change your plan.</p>
+            <p className="mb-3 text-xs text-slate">Available any time your monthly allocation runs out — doesn&apos;t change your plan.</p>
             <div className="grid gap-3 sm:grid-cols-3">
               {CREDIT_TOPUPS.map((pack) => (
                 <div

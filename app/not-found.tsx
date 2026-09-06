@@ -6,7 +6,7 @@ export default function NotFound() {
       <p className="text-sm font-semibold text-signal">404</p>
       <h1 className="mt-2 text-3xl font-bold text-ink">Page not found</h1>
       <p className="mt-2 max-w-sm text-sm text-slate">
-        The page you're looking for doesn't exist, or you may need to log in to see it.
+        The page you&apos;re looking for doesn&apos;t exist, or you may need to log in to see it.
       </p>
       <div className="mt-6 flex gap-3">
         <Link href="/" className="rounded border border-hairline px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-signal">

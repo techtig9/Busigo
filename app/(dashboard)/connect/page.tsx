@@ -35,7 +35,7 @@ export default async function ConnectPage() {
       <header>
         <p className="text-xs font-bold uppercase tracking-widest text-signal">Phase 2 · Connect</p>
         <h1 className="mt-2 text-3xl font-bold text-ink">Connect your business</h1>
-        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate">Bring your apps, website and business documents into BusiGo's unified business data layer. Connections are permission-scoped and every sync gets a status trail.</p>
+        <p className="mt-2 max-w-3xl text-sm leading-6 text-slate">Bring your apps, website and business documents into BusiGo&apos;s unified business data layer. Connections are permission-scoped and every sync gets a status trail.</p>
       </header>
 
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">

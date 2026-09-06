@@ -40,7 +40,7 @@ export default function LandingPage() {
     <div>
       <section className="relative overflow-hidden px-6 py-24 text-center">
         <div className="mx-auto max-w-4xl animate-slide-up">
-          <p className="text-sm font-semibold text-signal">{timeGreeting()} — let's automate something.</p>
+          <p className="text-sm font-semibold text-signal">{timeGreeting()} — let&apos;s automate something.</p>
           <h1 className="mt-3 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
             Your AI Business Operating System.
           </h1>

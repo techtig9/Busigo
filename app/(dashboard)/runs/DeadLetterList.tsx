@@ -26,7 +26,7 @@ export function DeadLetterList({ entries, canReplay }: { entries: DeadLetterRow[
   const [replayingId, setReplayingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  if (entries.length === 0) return <p className="text-sm text-slate">Nothing dead-lettered — every retry that's run has eventually succeeded or is still in progress.</p>;
+  if (entries.length === 0) return <p className="text-sm text-slate">Nothing dead-lettered — every retry that&apos;s run has eventually succeeded or is still in progress.</p>;
 
   return (
     <div className="space-y-2">
@@ -37,7 +37,7 @@ export function DeadLetterList({ entries, canReplay }: { entries: DeadLetterRow[
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate text-ink">
-                  {workflowName(entry)} <span className="text-xs text-slate">— step "{entry.step_key}"</span>
+                  {workflowName(entry)} <span className="text-xs text-slate">— step &quot;{entry.step_key}&quot;</span>
                 </p>
                 <p className="mt-0.5 truncate text-xs text-slate">{entry.reason}</p>
               </div>

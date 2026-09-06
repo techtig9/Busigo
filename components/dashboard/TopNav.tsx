@@ -140,7 +140,7 @@ export function TopNav({
             {searchOpen && hasQuery && (
               <div className="absolute left-0 top-full z-20 mt-1 w-96 rounded border border-hairline bg-panel py-1 shadow-md animate-fade-in">
                 {!searching && !hasResults && (
-                  <p className="px-3 py-6 text-center text-sm text-slate">No results for "{query.trim()}".</p>
+                  <p className="px-3 py-6 text-center text-sm text-slate">No results for &quot;{query.trim()}&quot;.</p>
                 )}
 
                 {results.workflows.length > 0 && (
@@ -220,7 +220,7 @@ export function TopNav({
                 </div>
                 <div className="max-h-80 overflow-y-auto">
                   {items.length === 0 ? (
-                    <p className="px-3 py-6 text-center text-sm text-slate">You're all caught up.</p>
+                    <p className="px-3 py-6 text-center text-sm text-slate">You&apos;re all caught up.</p>
                   ) : (
                     items.map((n) => (
                       <Link

@@ -51,7 +51,7 @@ export function ScheduleTrigger({ cron, onChange }: { cron: string; onChange: (c
     <div>
       <Label>Cron expression</Label>
       <Input value={cron} onChange={(e) => onChange(e.target.value)} placeholder="0 9 * * *" className="font-mono text-xs" />
-      <p className="mt-1 text-xs text-slate">Checked once a minute by /api/cron/tick. Example: "0 9 * * *" runs daily at 09:00 UTC.</p>
+      <p className="mt-1 text-xs text-slate">Checked once a minute by /api/cron/tick. Example: &quot;0 9 * * *&quot; runs daily at 09:00 UTC.</p>
     </div>
   );
 }

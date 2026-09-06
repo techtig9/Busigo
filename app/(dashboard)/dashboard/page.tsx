@@ -81,7 +81,7 @@ export default async function DashboardPage() {
           <h1 className="text-2xl font-bold text-ink">
             {timeGreeting()}, {firstName} <span aria-hidden>👋</span>
           </h1>
-          <p className="mt-0.5 text-sm text-slate">Here's what's happening with your workflows.</p>
+          <p className="mt-0.5 text-sm text-slate">Here&apos;s what&apos;s happening with your workflows.</p>
         </div>
         <Button href="/workflows/new">New workflow</Button>
       </div>
