@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { requestIntegrationAction, createDataSourceAction, queueSyncAction } from "@/lib/actions/connect";
+import { Input, Select } from "@/components/ui/Input";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +32,7 @@ export default async function ConnectPage() {
   ]);
   const connected = new Map((integrations || []).map((x) => [x.provider, x]));
   return (
-    <div className="mx-auto max-w-6xl space-y-8">
+    <div className="space-y-8">
       <header>
         <p className="text-xs font-bold uppercase tracking-widest text-signal">Phase 2 · Connect</p>
         <h1 className="mt-2 text-3xl font-bold text-ink">Connect your business</h1>
@@ -51,7 +52,7 @@ export default async function ConnectPage() {
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <Card><div className="mb-5"><h2 className="text-lg font-bold text-ink">Business data sources</h2><p className="text-sm text-slate">Add a website or manually register a source for the Business Brain.</p></div><form action={createDataSourceAction} className="space-y-3"><select name="source_type" className="w-full rounded border border-hairline bg-panel px-3 py-2 text-sm"><option value="website">Website</option><option value="manual">Manual source</option><option value="document">Document metadata</option></select><input name="name" required placeholder="Source name" className="w-full rounded border border-hairline bg-panel px-3 py-2 text-sm"/><input name="url" placeholder="https://yourbusiness.com" className="w-full rounded border border-hairline bg-panel px-3 py-2 text-sm"/><Button type="submit">Add source</Button></form><div className="mt-6 space-y-2">{(sources || []).slice(0,5).map((s) => <div key={s.id} className="flex items-center justify-between rounded border border-hairline p-3"><div><p className="text-sm font-semibold text-ink">{s.name}</p><p className="text-xs text-slate">{s.source_type}{s.url ? ` · ${s.url}` : ""}</p></div><Badge tone={s.status === "ready" ? "good" : s.status === "error" ? "bad" : "warn"}>{s.status}</Badge></div>)}</div></Card>
+        <Card><div className="mb-5"><h2 className="text-lg font-bold text-ink">Business data sources</h2><p className="text-sm text-slate">Add a website or manually register a source for the Business Brain.</p></div><form action={createDataSourceAction} className="space-y-3"><Select name="source_type" ><option value="website">Website</option><option value="manual">Manual source</option><option value="document">Document metadata</option></Select><Input name="name" required placeholder="Source name" /><Input name="url" placeholder="https://yourbusiness.com" /><Button type="submit">Add source</Button></form><div className="mt-6 space-y-2">{(sources || []).slice(0,5).map((s) => <div key={s.id} className="flex items-center justify-between rounded border border-hairline p-3"><div><p className="text-sm font-semibold text-ink">{s.name}</p><p className="text-xs text-slate">{s.source_type}{s.url ? ` · ${s.url}` : ""}</p></div><Badge tone={s.status === "ready" ? "good" : s.status === "error" ? "bad" : "warn"}>{s.status}</Badge></div>)}</div></Card>
         <Card><div className="mb-5"><h2 className="text-lg font-bold text-ink">Website intelligence</h2><p className="text-sm text-slate">Website sources are queued for structured analysis: pages, products, services, FAQs, positioning and conversion opportunities.</p></div><div className="space-y-3">{(analyses || []).length ? analyses!.map((a) => <div key={a.id} className="rounded border border-hairline p-3"><div className="flex justify-between"><p className="text-sm font-semibold text-ink">{a.url}</p><Badge tone={a.status === "ready" ? "good" : "warn"}>{a.status}</Badge></div><p className="mt-1 text-xs text-slate">{a.pages_processed}/{a.pages_discovered} pages processed</p></div>) : <p className="text-sm text-slate">No website analysis queued yet. Add your website above.</p>}</div><div className="mt-6 rounded bg-surface p-4 text-xs leading-5 text-slate">Provider authentication is intentionally permission-scoped. This phase establishes the integration, ingestion and sync architecture; provider OAuth/API credentials must be configured before live external API traffic is enabled.</div></Card>
       </section>
 

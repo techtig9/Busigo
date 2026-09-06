@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic";
 
 export default function AcceptInvitePage({ params }: { params: { token: string } }) {
   return (
-    <div className="mx-auto max-w-md">
+    <div className="">
       <Card>
         <h1 className="text-xl font-bold text-ink">Join workspace</h1>
         <p className="mt-2 text-sm text-slate">

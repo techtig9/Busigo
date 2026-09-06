@@ -8,6 +8,8 @@ import { AgentControls } from "@/components/workforce/AgentControls";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { Input, Textarea } from "@/components/ui/Input";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export default async function WorkforcePage() {
   const supabase = createServerSupabase();
@@ -23,8 +25,8 @@ export default async function WorkforcePage() {
   ]);
   const taskRows = tasks || [];
   const openTasks = taskRows.filter((t: any) => !["completed", "cancelled"].includes(t.status)).length;
-  return <div className="mx-auto max-w-7xl space-y-6">
-    <div><h1 className="text-2xl font-bold text-ink">AI Workforce Command Center</h1><p className="mt-1 text-sm text-slate">Deploy specialist AI workers with explicit permissions, tasks, memory boundaries, human handoffs and auditable actions.</p></div>
+  return <div className="space-y-6">
+    <PageHeader title="AI Workforce Command Center" description="Deploy specialist AI workers with explicit permissions, tasks, memory boundaries, human handoffs and auditable actions." />
     <BusinessPhaseBar current={4}/>
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <Card><p className="text-xs uppercase text-slate">Agents</p><p className="mt-2 text-2xl font-bold text-ink">{agents.length}</p></Card>
@@ -42,7 +44,7 @@ export default async function WorkforcePage() {
         <div className="mt-4 flex flex-wrap gap-2"><Badge tone="neutral">Autonomy: {a.autonomy_level}</Badge><Badge tone="neutral">Permissions: {agentPermissions.filter((p:any)=>p.allowed).length}</Badge><Badge tone="neutral">Tasks: {agentTasks.length}</Badge></div>
         <AgentControls agent={a} permissions={agentPermissions} saveAction={saveAgentPermissionsAction} />
         <div className="mt-4 flex flex-wrap gap-2"><form action={async () => { "use server"; await setAgentPolicyAction(a.id, "approval_required", a.status === "active" ? "paused" : "active"); }}><Button type="submit" variant="secondary">{a.status === "active" ? "Pause" : "Activate safely"}</Button></form><form action={async () => { "use server"; await setAgentPolicyAction(a.id, "low_risk_auto", a.status); }}><Button type="submit" variant="ghost">Allow low-risk auto</Button></form></div>
-        <form action={createAgentTaskAction} className="mt-4 grid gap-2 border-t border-hairline pt-4"><input type="hidden" name="agent_id" value={a.id}/><input name="title" required placeholder="Give this agent a task…" className="rounded border border-hairline bg-panel px-3 py-2 text-sm text-ink"/><textarea name="description" placeholder="Optional context or expected outcome" className="rounded border border-hairline bg-panel px-3 py-2 text-sm text-ink"/><Button type="submit">Queue task</Button></form>
+        <form action={createAgentTaskAction} className="mt-4 grid gap-2 border-t border-hairline pt-4"><input type="hidden" name="agent_id" value={a.id}/><Input name="title" required placeholder="Give this agent a task…" /><Textarea name="description" placeholder="Optional context or expected outcome" /><Button type="submit">Queue task</Button></form>
       </Card>;
     })}</div>
     {handoffs && handoffs.length > 0 && <Card><h2 className="font-bold text-ink">Human handoffs</h2><div className="mt-3 space-y-3">{handoffs.map((h:any)=><div key={h.id} className="rounded border border-hairline p-3"><p className="text-sm text-ink">{h.reason}</p><p className="mt-1 text-xs text-slate">Waiting for human review</p></div>)}</div></Card>}

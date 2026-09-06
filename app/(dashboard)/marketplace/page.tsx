@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { installMarketplaceApp } from "@/lib/actions/marketplace";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -17,8 +18,8 @@ export default async function MarketplacePage() {
     supabase.from("marketplace_installations").select("app_id, status").eq("workspace_id", workspace.id),
   ]);
   const installed = new Set((installs || []).filter(i => i.status === "installed").map(i => i.app_id));
-  return <div className="mx-auto max-w-5xl space-y-6">
-    <div><h1 className="text-2xl font-bold text-ink">App Marketplace</h1><p className="mt-1 text-sm text-slate">Discover approved business connectors and extend your BusiGo workforce.</p></div>
+  return <div className="space-y-6">
+    <PageHeader title="App Marketplace" description="Discover approved business connectors and extend your BusiGo workforce." />
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {(apps || []).map(app => <Card key={app.id}>
         <div className="flex items-start justify-between gap-3"><div><h2 className="font-bold text-ink">{app.name}</h2><p className="text-xs text-slate">{app.publisher} · {app.category}</p></div><Badge tone="signal">{app.pricing_model}</Badge></div>

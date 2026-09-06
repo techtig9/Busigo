@@ -3,6 +3,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import Link from "next/link";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +22,8 @@ export default async function FormsPage() {
     .eq("trigger_type", "form");
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="text-2xl font-bold text-ink">Forms</h1>
+    <div className="space-y-6">
+      <PageHeader title="Forms" />
       <Card>
         {!workflows || workflows.length === 0 ? (
           <p className="text-sm text-slate">

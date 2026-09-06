@@ -6,6 +6,7 @@ import { Badge, statusTone } from "@/components/ui/Badge";
 import { formatDate, formatDuration } from "@/lib/utils";
 import { ExportButtons } from "./ExportButtons";
 import Link from "next/link";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -62,9 +63,9 @@ export default async function WorkflowRunsPage({ params }: { params: { workflowI
   }));
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-ink">{workflow.name} — Runs</h1>
+        <PageHeader title="{workflow.name} — Runs" />
         <ExportButtons workflowName={workflow.name} data={exportData} />
       </div>
 

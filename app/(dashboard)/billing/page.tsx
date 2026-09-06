@@ -9,6 +9,7 @@ import { BuyCreditsButton } from "./BuyCreditsButton";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import { roleAtLeast } from "@/lib/workspace/roles";
 import type { Plan } from "@/types/database";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -39,11 +40,8 @@ export default async function BillingPage() {
   const pct = creditsTotal > 0 ? Math.min(100, Math.round(((sub?.credits_remaining ?? 0) / creditsTotal) * 100)) : 0;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">Billing</h1>
-        <p className="mt-1 text-sm text-slate">{workspace.name}&apos;s plan and credits — shared by every member of this workspace.</p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader title="Billing" description="{workspace.name}&apos;s plan and credits — shared by every member of this workspace." />
 
       <Card className="transition-shadow hover:shadow-md">
         <div className="flex items-center justify-between">

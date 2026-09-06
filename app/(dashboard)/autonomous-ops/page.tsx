@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { createAutonomyPolicyAction, toggleAutonomyPolicyAction, createDecisionAction, resolveIncidentAction, markAlertReadAction, verifyDecisionAction } from "@/lib/actions/autonomous-ops";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export default async function AutonomousOpsPage() {
   const supabase = createServerSupabase();
@@ -19,8 +20,8 @@ export default async function AutonomousOpsPage() {
     supabase.from("executive_briefings").select("*").eq("workspace_id", workspace.id).order("created_at", { ascending: false }).limit(2),
   ]);
   const activePolicy = (policies || []).filter((p: any) => p.enabled).length;
-  return <div className="mx-auto max-w-6xl space-y-6">
-    <div><h1 className="text-2xl font-bold text-ink">Autonomous Business Operations</h1><p className="mt-1 text-sm text-slate">Phase 6 — continuous monitoring, controlled decisions, verification, incident response and executive intelligence.</p></div>
+  return <div className="space-y-6">
+    <PageHeader title="Autonomous Business Operations" description="Phase 6 — continuous monitoring, controlled decisions, verification, incident response and executive intelligence." />
     <BusinessPhaseBar current={6}/>
     <div className="grid gap-4 md:grid-cols-4">
       <Card><p className="text-xs uppercase text-slate">Active policies</p><p className="mt-1 text-2xl font-bold text-ink">{activePolicy}</p></Card>

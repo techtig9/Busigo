@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 // globals.css.
 export default function DashboardLoading() {
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="skeleton h-8 w-48" />
         <div className="skeleton h-9 w-32" />

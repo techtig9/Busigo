@@ -5,6 +5,7 @@ import type { ConnectionService, Plan } from "@/types/database";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { QueueButton } from "./QueueButton";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -38,15 +39,10 @@ export default async function ConnectionsPage() {
   const queuedServices = new Set((connections || []).map((c) => c.service));
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">Connections</h1>
-        <p className="mt-1 text-sm text-slate">
-          Real app connections are on the near-term roadmap (Phase 2). Join the waitlist for the ones you need and
+    <div className="space-y-6">
+      <PageHeader title="Connections" description="Real app connections are on the near-term roadmap (Phase 2). Join the waitlist for the ones you need and
           we&apos;ll notify you when they&apos;re live.
-          {!allowed && " App connections require the Pro plan."}
-        </p>
-      </div>
+          {!allowed && &quot; App connections require the Pro plan.&quot;}" />
       <Card>
         <ul className="divide-y divide-hairline">
           {SERVICES.map((s) => (

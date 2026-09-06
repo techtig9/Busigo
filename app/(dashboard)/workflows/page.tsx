@@ -1,12 +1,25 @@
+import Link from "next/link";
+import { Workflow as WorkflowIcon } from "lucide-react";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
-import { formatDate } from "@/lib/utils";
-import Link from "next/link";
+import { EmptyState } from "@/components/ui/States";
+import { DataTable, type Column } from "@/components/patterns/DataTable";
 import { DuplicateButton } from "./DuplicateButton";
+import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
+
+interface Row {
+  id: string;
+  name: string;
+  description: string | null;
+  trigger_type: string;
+  status: string;
+  created_at: string;
+}
 
 export default async function WorkflowsPage() {
   const supabase = createServerSupabase();
@@ -22,55 +35,76 @@ export default async function WorkflowsPage() {
     .eq("workspace_id", workspace.id)
     .order("created_at", { ascending: false });
 
-  return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-ink">Workflows</h1>
-        <Button href="/workflows/new">New workflow</Button>
-      </div>
+  const rows = (workflows || []) as Row[];
+  const published = rows.filter((w) => w.status === "published").length;
 
-      {!workflows || workflows.length === 0 ? (
-        <div className="rounded border border-dashed border-hairline p-12 text-center">
-          <p className="text-sm text-slate">No workflows yet.</p>
-          <Button href="/workflows/new" className="mt-4">
-            Create your first workflow
-          </Button>
-        </div>
-      ) : (
-        <div className="overflow-hidden rounded border border-hairline bg-panel">
-          <table className="w-full text-left text-sm">
-            <thead className="border-b border-hairline bg-surface text-xs uppercase tracking-wide text-slate">
-              <tr>
-                <th className="px-4 py-3">Name</th>
-                <th className="px-4 py-3">Trigger</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Created</th>
-                <th className="px-4 py-3" />
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-hairline">
-              {workflows.map((wf) => (
-                <tr key={wf.id}>
-                  <td className="px-4 py-3">
-                    <Link href={`/workflows/${wf.id}`} className="font-semibold text-ink hover:text-signal">
-                      {wf.name}
-                    </Link>
-                    {wf.description && <p className="text-xs text-slate">{wf.description}</p>}
-                  </td>
-                  <td className="px-4 py-3 capitalize text-slate">{wf.trigger_type}</td>
-                  <td className="px-4 py-3">
-                    <Badge tone={wf.status === "published" ? "signal" : "slate"}>{wf.status}</Badge>
-                  </td>
-                  <td className="px-4 py-3 text-slate">{formatDate(wf.created_at)}</td>
-                  <td className="px-4 py-3 text-right">
-                    <DuplicateButton workflowId={wf.id} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+  const columns: Column<Row>[] = [
+    {
+      key: "name",
+      header: "Name",
+      cell: (w) => (
+        <>
+          <span className="block truncate">{w.name}</span>
+          {w.description && <span className="block truncate text-xs font-normal text-muted">{w.description}</span>}
+        </>
+      ),
+    },
+    { key: "trigger", header: "Trigger", hideBelow: "sm", cell: (w) => <span className="capitalize">{w.trigger_type}</span> },
+    {
+      key: "status",
+      header: "Status",
+      cell: (w) => <Badge tone={w.status === "published" ? "success" : "slate"}>{w.status}</Badge>,
+    },
+    { key: "created", header: "Created", hideBelow: "md", cell: (w) => formatDate(w.created_at) },
+    {
+      key: "actions",
+      header: <span className="sr-only">Actions</span>,
+      align: "right",
+      width: "1%",
+      cell: (w) => <DuplicateButton workflowId={w.id} />,
+    },
+  ];
+
+  return (
+    <>
+      <PageHeader
+        title="Workflows"
+        description={
+          rows.length
+            ? `${rows.length} total · ${published} published and accepting triggers.`
+            : "A workflow turns a trigger into a traced sequence of steps."
+        }
+        actions={<Button href="/workflows/new">New workflow</Button>}
+      />
+
+      <DataTable
+        caption="All workflows in this workspace"
+        columns={columns}
+        rows={rows}
+        rowKey={(w) => w.id}
+        rowHref={(w) => `/workflows/${w.id}`}
+        empty={
+          <div className="rounded-xl border border-hairline bg-panel">
+            <EmptyState
+              icon={WorkflowIcon}
+              title="No workflows yet"
+              body="A workflow starts with a trigger — a webhook, a schedule, or a public form — and runs an ordered sequence of steps. Every execution is traced."
+              action={{ label: "Create your first workflow", href: "/workflows/new" }}
+              aiAction={{ label: "Draft one with AI", href: "/automation-center" }}
+            />
+          </div>
+        }
+      />
+
+      {rows.length > 0 && (
+        <p className="mt-3 text-xs text-muted">
+          Looking for execution history?{" "}
+          <Link href="/runs" className="text-signal hover:underline">
+            Open Runs
+          </Link>
+          .
+        </p>
       )}
-    </div>
+    </>
   );
 }

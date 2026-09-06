@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils";
 import { SubscriptionOverrideRow } from "./SubscriptionOverrideRow";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +41,8 @@ export default async function AdminPage() {
   const workspacesById = new Map((workspaces || []).map((w) => [w.id, w]));
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <h1 className="text-2xl font-bold text-ink">Admin</h1>
+    <div className="space-y-6">
+      <PageHeader title="Admin" />
 
       <Card>
         <h2 className="mb-3 font-bold text-ink">Workspaces & subscriptions</h2>

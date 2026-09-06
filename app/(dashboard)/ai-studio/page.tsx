@@ -6,6 +6,7 @@ import { getWorkspaceContext } from "@/lib/workspace/context";
 import { getAIProviderStatus, PROVIDER_ORDER } from "@/lib/ai/provider";
 import { getProviderCooldowns, getWorkspaceAIStats } from "@/lib/ai/observability";
 import { formatDate } from "@/lib/utils";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -30,13 +31,8 @@ export default async function AIStudioPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-ink">AI Studio</h1>
-        <p className="mt-1 text-sm text-slate">
-          Turn business goals into auditable AI plans. Requests are routed Groq → Cerebras → OpenRouter → Anthropic,
-          falling over only on rate-limit/quota responses — never silently on any other kind of failure.
-        </p>
-      </div>
+      <PageHeader title="AI Studio" description="Turn business goals into auditable AI plans. Requests are routed Groq → Cerebras → OpenRouter → Anthropic,
+          falling over only on rate-limit/quota responses — never silently on any other kind of failure." />
 
       <Card>
         <div className="flex items-center justify-between">

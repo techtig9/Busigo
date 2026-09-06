@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge, statusTone } from "@/components/ui/Badge";
 import Link from "next/link";
 import { getWorkspaceContext } from "@/lib/workspace/context";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +25,9 @@ export default async function BusinessIntelligencePage() {
   const score = Math.max(0, Math.min(100, Math.round(Number(s?.health_score ?? 0))));
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div><p className="text-sm font-semibold text-signal">Business Digital Twin</p><h1 className="text-2xl font-bold text-ink">Real-Time Business Intelligence</h1><p className="mt-1 text-sm text-slate">A live view of business health, events, anomalies and emerging signals.</p></div>
+        <div><p className="text-sm font-semibold text-signal">Business Digital Twin</p><PageHeader title="Real-Time Business Intelligence" /><p className="mt-1 text-sm text-slate">A live view of business health, events, anomalies and emerging signals.</p></div>
         <Link href="/dashboard" className="text-sm font-semibold text-signal hover:underline">Back to Command Center</Link>
       </div>
 

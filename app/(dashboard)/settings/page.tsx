@@ -7,6 +7,7 @@ import { listMembersAction, listInvitationsAction } from "@/lib/actions/workspac
 import { listApiKeysAction } from "@/lib/actions/api-keys";
 import { listMfaFactorsAction } from "@/lib/actions/mfa";
 import { WorkspaceSettingsPanel } from "./WorkspaceSettingsPanel";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -30,8 +31,8 @@ export default async function SettingsPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
-      <h1 className="text-2xl font-bold text-ink">Settings</h1>
+    <div className="space-y-6">
+      <PageHeader title="Settings" />
 
       <WorkspaceSettingsPanel
         canManage={canManage}

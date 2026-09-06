@@ -1,5 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,7 @@ export default async function ScaleReliabilityPage() {
   const failed = (jobs || []).filter(j => j.status === "failed" || j.status === "dead_letter").length;
   const latestHealth = health?.[0];
   return <div className="space-y-6">
-    <div><p className="text-sm font-semibold text-signal">PHASE 14</p><h1 className="text-3xl font-bold text-ink">Scale & Reliability</h1><p className="mt-2 text-slate">Production infrastructure for queues, retries, idempotency, health and observability.</p></div>
+    <PageHeader title="Scale & Reliability" description="Production infrastructure for queues, retries, idempotency, health and observability." />
     <div className="grid gap-4 md:grid-cols-4">
       {[["Queue depth", queued], ["Recent failures", failed], ["Dead-letter jobs", dead?.length || 0], ["Latest health", latestHealth?.status || "unknown"]].map(([label,value]) => <div key={String(label)} className="rounded-xl border border-hairline bg-panel p-5"><p className="text-sm text-slate">{label}</p><p className="mt-2 text-2xl font-bold text-ink">{value}</p></div>)}
     </div>

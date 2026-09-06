@@ -1,6 +1,7 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import { Card } from "@/components/ui/Card";
 import { ProfileForms } from "./ProfileForms";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -14,8 +15,8 @@ export default async function ProfilePage() {
   const { data: profile } = await supabase.from("users").select("name, email, role").eq("id", user.id).single();
 
   return (
-    <div className="mx-auto max-w-lg space-y-6">
-      <h1 className="text-2xl font-bold text-ink">Profile</h1>
+    <div className="space-y-6">
+      <PageHeader title="Profile" />
       <Card>
         <p className="text-xs uppercase tracking-wide text-slate">Email</p>
         <p className="mt-1 text-sm text-ink">{profile?.email}</p>
