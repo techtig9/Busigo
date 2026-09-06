@@ -9,11 +9,23 @@ export interface StepNodeData extends Record<string, unknown> {
   config: Record<string, any>;
 }
 
+// Mirrors the fallback layout in lib/engine/graph.ts so a backfilled node lands where the
+// linear converter would have put it.
+const LAYOUT_X = 260;
+const LAYOUT_Y_START = 40;
+const LAYOUT_Y_STEP = 140;
+
 export function graphToFlow(graph: WorkflowGraph): { nodes: Node<StepNodeData>[]; edges: Edge[] } {
-  const nodes: Node<StepNodeData>[] = graph.nodes.map((n) => ({
+  const nodes: Node<StepNodeData>[] = graph.nodes.map((n, i) => ({
     id: n.key,
     type: "step",
-    position: n.position,
+    // Position is cosmetic and only ever written by this file's flowToGraph, so stored graphs
+    // normally have it. A graph from any other producer (a seeded template, an AI-generated
+    // plan) may not — and React Flow dereferences position.x unguarded, so one missing value
+    // throws inside its store and takes down the whole builder page rather than degrading.
+    // Falling back to the linear layout keeps a slightly-wrong position from becoming an
+    // outage.
+    position: n.position ?? { x: LAYOUT_X, y: LAYOUT_Y_START + i * LAYOUT_Y_STEP },
     data: { stepType: n.type, config: n.config },
   }));
 

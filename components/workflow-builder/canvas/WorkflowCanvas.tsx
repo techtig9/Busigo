@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState, useEffect } from "react";
+import { useCallback, useMemo, useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -54,15 +54,44 @@ interface Props {
   onChange: (graph: WorkflowGraph) => void;
   triggerType: string;
   aiActionAllowed: boolean;
+  /**
+   * Bumped by the parent to force the canvas to re-seed from `definition`.
+   *
+   * The canvas owns its node/edge state once mounted, so undo/redo (which replaces the
+   * definition wholesale from a history stack) would otherwise have no way to reach it.
+   * Changing this counter is the parent saying "discard what you have and take this".
+   */
+  resetKey?: number;
+  /** Live per-step status, keyed by step key, shown on the nodes during a test run. */
+  liveStatuses?: Record<string, { status: string }>;
 }
 
-function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Props) {
+/** Imperative surface so a node library outside the canvas can add to it. */
+export interface WorkflowCanvasHandle {
+  addStep: (type: StepType) => void;
+}
+
+const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner(
+  { definition, onChange, triggerType, aiActionAllowed, resetKey = 0, liveStatuses },
+  ref
+) {
   const initial = useMemo(() => graphToFlow(normalizeToGraph(definition)), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<StepNodeData>>(initial.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(initial.edges);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPalette, setShowPalette] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  // Re-seed from the definition when the parent signals a wholesale replacement. Guarded on
+  // resetKey rather than on `definition` itself: `definition` changes on every keystroke as
+  // the canvas reports its own edits upward, and reacting to that would fight the user.
+  useEffect(() => {
+    if (resetKey === 0) return;
+    const next = graphToFlow(normalizeToGraph(definition));
+    setNodes(next.nodes);
+    setEdges(next.edges);
+    setSelectedId(null);
+  }, [resetKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Every structural change (node/edge add/remove/reconnect, config edit) reports the graph
   // back up to WorkflowBuilder as the single source of truth it saves — the canvas doesn't
@@ -157,6 +186,8 @@ function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Pro
     emitChange(nextNodes, nextEdges);
   };
 
+  useImperativeHandle(ref, () => ({ addStep }), [nodes, edges]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const selectedNode = nodes.find((n) => n.id === selectedId);
   const availableRefs: AvailableRef[] = useMemo(() => {
     if (!selectedId) return [];
@@ -170,7 +201,7 @@ function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Pro
   }, [selectedId, nodes, edges]);
 
   return (
-    <div className="flex h-[36rem] overflow-hidden rounded border border-hairline">
+    <div className="flex h-full min-h-[24rem] overflow-hidden border-y border-hairline">
       <div className="relative flex-1">
         <ReactFlow
           nodes={nodes}
@@ -190,7 +221,7 @@ function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Pro
           <MiniMap pannable zoomable className="!bg-panel" />
         </ReactFlow>
 
-        <div className="absolute left-3 top-3 z-10">
+        <div className="absolute left-3 top-3 z-10 md:hidden">
           <button
             type="button"
             onClick={() => setShowPalette((v) => !v)}
@@ -246,12 +277,12 @@ function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Pro
       )}
     </div>
   );
-}
+});
 
-export function WorkflowCanvas(props: Props) {
+export const WorkflowCanvas = forwardRef<WorkflowCanvasHandle, Props>(function WorkflowCanvas(props, ref) {
   return (
     <ReactFlowProvider>
-      <CanvasInner {...props} />
+      <CanvasInner {...props} ref={ref} />
     </ReactFlowProvider>
   );
-}
+});

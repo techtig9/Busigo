@@ -56,3 +56,23 @@ test("flowToGraph: an edge's sourceHandle that isn't 'true' or 'false' is droppe
   const graph = flowToGraph(nodes as any, edges as any);
   assert.equal(graph.edges[0].branch, undefined);
 });
+
+test("graphToFlow: a node with no position gets a fallback rather than producing undefined", () => {
+  // React Flow dereferences position.x without guarding, so an undefined position throws
+  // inside its store and takes the entire builder page down via the error boundary — a
+  // whole-page outage caused by a purely cosmetic field. Stored graphs always carry a
+  // position (flowToGraph writes it), but a seeded template or an AI-generated plan need not.
+  const graph = {
+    nodes: [
+      { key: "a", type: "http_request" as const, config: {} },
+      { key: "b", type: "delay" as const, config: {}, position: { x: 99, y: 99 } },
+    ],
+    edges: [],
+  };
+  const { nodes } = graphToFlow(graph as any);
+  assert.ok(nodes[0].position, "a node without a stored position must still get one");
+  assert.equal(typeof nodes[0].position.x, "number");
+  assert.equal(typeof nodes[0].position.y, "number");
+  // An explicit position is never overwritten by the fallback.
+  assert.deepEqual(nodes[1].position, { x: 99, y: 99 });
+});
