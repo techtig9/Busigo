@@ -66,8 +66,9 @@ export default function LandingPage() {
             Sign up in under a minute — every feature lives behind your account, so your workflows and runs are always private to you.
           </p>
         </div>
-        <div className="pointer-events-none absolute left-[8%] top-16 hidden h-16 w-16 rounded-full bg-signal/10 animate-float-slow md:block" />
-        <div className="pointer-events-none absolute right-[10%] top-32 hidden h-10 w-10 rounded-full bg-pulse/15 animate-float-slow md:block" style={{ animationDelay: "1.2s" }} />
+        {/* Two hard-edged floating circles used to sit here. With Aurora now the sanctioned
+            brand atmosphere on this surface, they read as unblurred artifacts competing with
+            the gradient behind them rather than as intentional decoration. */}
       </section>
 
       <section className="border-t border-hairline bg-surface">

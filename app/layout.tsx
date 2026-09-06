@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { ToastProvider } from "@/components/ui/Toast";
-import { AuroraBackground } from "@/components/AuroraBackground";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
+// Inter for UI (spec §1). IBM Plex Mono is deliberately retained for code, JSON payloads,
+// run logs and identifiers — it reads well in dense traces and gives the operational
+// surfaces a distinct texture from the UI type.
+const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  variable: "--font-plex-sans",
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -25,7 +27,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${plexSans.variable} ${plexMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Blocking (not deferred) on purpose: applies the theme class before first paint so
             there's no flash of the wrong theme. Reads localStorage synchronously, falls back
@@ -37,8 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
       </head>
+      {/* AuroraBackground is deliberately NOT mounted here. It used to be global, which put a
+          drifting gradient behind every dense dashboard table, run trace and workflow canvas
+          — directly against spec §1 ("Never place strong gradients behind dense data"). It is
+          now scoped to marketing/auth surfaces in app/(public)/layout.tsx. */}
       <body className="font-sans antialiased">
-        <AuroraBackground />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

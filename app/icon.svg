@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="BusiGo">
+  <rect width="32" height="32" rx="7" fill="#6D4AFF"/>
+  <g fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round">
+    <path d="M16 10.5v4"/>
+    <path d="M16 14.5c0 3 -5 2 -5 5"/>
+    <path d="M16 14.5c0 3 5 2 5 5"/>
+  </g>
+  <g fill="#FFFFFF">
+    <circle cx="16" cy="8.5" r="2.9"/>
+    <circle cx="11" cy="22" r="2.9"/>
+    <circle cx="21" cy="22" r="2.9"/>
+  </g>
+</svg>

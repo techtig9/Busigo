@@ -1,11 +1,14 @@
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { AuroraBackground } from "@/components/AuroraBackground";
 import { APP_NAME } from "@/lib/utils";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
+      {/* Aurora lives here, not in the root layout — marketing and auth surfaces only. */}
+      <AuroraBackground />
       <header className="sticky top-0 z-30 border-b border-hairline bg-panel/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-lg font-bold text-ink">

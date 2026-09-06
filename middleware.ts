@@ -16,6 +16,11 @@ const PUBLIC_PATHS = [
 
 function isPublicPath(pathname: string) {
   if (PUBLIC_PATHS.includes(pathname)) return true;
+  // Design-system gallery and any other /dev/* QA surface. Double-gated: the pages
+  // themselves notFound() when NODE_ENV === "production" (see app/dev/design-system/page.tsx),
+  // and this allowance is itself dev-only, so neither half can expose them on a real deploy.
+  // They render no user data — the point is to review components without a Supabase session.
+  if (process.env.NODE_ENV !== "production" && pathname.startsWith("/dev/")) return true;
   if (pathname.startsWith("/form/")) return true;
   if (pathname.startsWith("/auth/")) return true;
   if (pathname.startsWith("/api/hook/")) return true;
