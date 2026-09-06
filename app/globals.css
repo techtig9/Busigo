@@ -312,3 +312,35 @@ h1, h2, h3 {
 .dark .shadow-float {
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 28px -8px rgb(0 0 0 / 0.5);
 }
+
+/* ---------------------------------------------------------------------------------------
+   Command palette (cmdk). Styling lives here rather than inline because cmdk renders its own
+   group/heading wrappers that can only be reached by descendant selectors.
+--------------------------------------------------------------------------------------- */
+.cmd-group [cmdk-group-heading] {
+  padding: 0.5rem 0.625rem 0.25rem;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: rgb(var(--color-muted));
+}
+.cmd-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  border-radius: 8px;
+  padding: 0.5rem 0.625rem;
+  font-size: 14px;
+  color: rgb(var(--color-ink));
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--motion-micro) ease;
+}
+.cmd-item[data-selected="true"] {
+  background: rgb(var(--color-surface));
+}
+.cmd-item[data-disabled="true"] {
+  opacity: 0.5;
+  pointer-events: none;
+}

@@ -21,9 +21,16 @@ const PADDLE_FRAME = "https://buy.paddle.com https://sandbox-buy.paddle.com";
 // change than fits this pass). Documented here rather than silently shipped as if it were a
 // strict CSP — see PRODUCTION_READINESS.md for the follow-up. style-src needs 'unsafe-inline'
 // for the same reason plus this app's own inline style={{...}} usage (progress bars, etc.).
+// Next.js's development server compiles with eval-based source maps and React Refresh, both
+// of which need 'unsafe-eval'. Without it the CSP blocks the dev bundle outright and the app
+// silently fails to hydrate — every button, menu, toggle and keyboard shortcut is dead under
+// `npm run dev`, with only a CSP violation in the console to explain it. This is scoped to
+// development only; the production CSP below is unchanged and still forbids eval.
+const DEV_SCRIPT_SRC = process.env.NODE_ENV === "production" ? "" : " 'unsafe-eval'";
+
 const CSP = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' ${PADDLE_SCRIPT}`,
+  `script-src 'self' 'unsafe-inline'${DEV_SCRIPT_SRC} ${PADDLE_SCRIPT}`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src 'self' data: https:`,
   `font-src 'self' data:`,
