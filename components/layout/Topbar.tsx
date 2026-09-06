@@ -180,7 +180,7 @@ export function Topbar({
           <form action={signOutAction}>
             <button
               type="submit"
-              className="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-2 text-sm text-danger outline-none transition-colors duration-micro hover:bg-danger-soft"
+              className="flex w-full cursor-pointer items-center gap-2 rounded px-2.5 py-2 text-sm text-danger-ink outline-none transition-colors duration-micro hover:bg-danger-soft"
             >
               <LogOut size={15} aria-hidden /> Log out
             </button>

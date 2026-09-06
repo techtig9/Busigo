@@ -42,13 +42,13 @@ export function MfaChallengeForm() {
 
   return (
     <div className="space-y-4">
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
 
       {mode === "totp" ? (
         <>
           <div>
-            <Label>Authenticator code</Label>
-            <Input
+            <Label htmlFor="mfachallengefo-authenticator-code">Authenticator code</Label>
+            <Input id="mfachallengefo-authenticator-code"
               value={code}
               onChange={(e) => setCode(e.target.value)}
               inputMode="numeric"
@@ -67,8 +67,8 @@ export function MfaChallengeForm() {
       ) : (
         <>
           <div>
-            <Label>Recovery code</Label>
-            <Input value={code} onChange={(e) => setCode(e.target.value)} autoFocus placeholder="xxxxx-xxxxx" />
+            <Label htmlFor="mfachallengefo-recovery-code">Recovery code</Label>
+            <Input id="mfachallengefo-recovery-code" value={code} onChange={(e) => setCode(e.target.value)} autoFocus placeholder="xxxxx-xxxxx" />
             <p className="mt-1 text-xs text-slate">
               Using a recovery code removes two-factor authentication from your account — you&apos;ll be prompted to set it
               up again from Settings.

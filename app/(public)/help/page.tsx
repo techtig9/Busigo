@@ -39,17 +39,17 @@ export default function HelpPage() {
           Reach us directly — a real person reads every message.
         </p>
         <div className="mt-3 flex flex-col gap-1 text-sm">
-          <a href="mailto:techtig9@gmail.com" className="text-signal hover:underline">
+          <a href="mailto:techtig9@gmail.com" className="text-signal underline underline-offset-2 hover:text-signal-dark">
             techtig9@gmail.com
           </a>
-          <a href="tel:+92 3488597892" className="text-signal hover:underline">
+          <a href="tel:+92 3488597892" className="text-signal underline underline-offset-2 hover:text-signal-dark">
             +92 348 8597892
           </a>
         </div>
       </div>
       <p className="mt-6 text-sm text-slate">
         Curious who&apos;s behind busigo?{" "}
-        <Link href="/about" className="text-signal hover:underline">
+        <Link href="/about" className="text-signal underline underline-offset-2 hover:text-signal-dark">
           Read About Us
         </Link>
         .

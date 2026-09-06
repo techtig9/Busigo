@@ -54,7 +54,7 @@ export function Metric({
         <p
           className={cn(
             "mt-1 flex items-center gap-1 text-xs font-medium",
-            isGood === null ? "text-slate" : isGood ? "text-success" : "text-danger"
+            isGood === null ? "text-slate" : isGood ? "text-success-ink" : "text-danger-ink"
           )}
         >
           <DeltaIcon size={12} aria-hidden />

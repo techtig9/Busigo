@@ -33,7 +33,7 @@ export function NodeConfigPanel({
       <div className="border-t border-hairline p-3">
         <button
           onClick={onDelete}
-          className="flex w-full items-center justify-center gap-1.5 rounded border border-hairline py-2 text-xs font-semibold text-danger transition-colors hover:bg-danger/10"
+          className="flex w-full items-center justify-center gap-1.5 rounded border border-hairline py-2 text-xs font-semibold text-danger-ink transition-colors hover:bg-danger/10"
         >
           <Trash2 size={13} /> Remove step
         </button>

@@ -59,7 +59,7 @@ export function PricingClient() {
           />
         </button>
         <span className={cn("text-sm", annual ? "text-ink" : "text-slate")}>
-          Annual <span className="text-pulse">(save {ANNUAL_DISCOUNT_PCT}%)</span>
+          Annual <span className="text-pulse-ink">(save {ANNUAL_DISCOUNT_PCT}%)</span>
         </span>
       </div>
 
@@ -78,7 +78,7 @@ export function PricingClient() {
               style={{ animationDelay: `${i * 0.06}s` }}
             >
               {featured && (
-                <span className="mb-2 inline-block rounded-full bg-signal px-2 py-0.5 text-xs font-semibold text-white">
+                <span className="mb-2 inline-block rounded-full bg-signal-strong px-2 py-0.5 text-xs font-semibold text-white">
                   Most popular
                 </span>
               )}
@@ -88,7 +88,7 @@ export function PricingClient() {
                 <span className="text-sm font-normal text-slate">/mo</span>
               </p>
               {plan !== "free" && !annual && launchPct && (
-                <p className="mt-0.5 text-xs text-pulse">{launchPct}% off your first month</p>
+                <p className="mt-0.5 text-xs text-pulse-ink">{launchPct}% off your first month</p>
               )}
               {plan !== "free" && annual && <p className="mt-0.5 text-xs text-slate">billed annually</p>}
               <p className="mt-2 text-sm text-slate">{PLAN_CREDITS[plan].toLocaleString()} credits/mo</p>
@@ -96,7 +96,7 @@ export function PricingClient() {
                 href="/signup"
                 className={cn(
                   "mt-4 block rounded px-3 py-2 text-center text-sm font-semibold transition-colors",
-                  featured ? "bg-signal text-white hover:bg-signal-dark" : "border border-hairline text-ink hover:border-signal"
+                  featured ? "bg-signal-strong text-white hover:bg-signal-dark" : "border border-hairline text-ink hover:border-signal"
                 )}
               >
                 {plan === "free" ? "Start free" : "Choose " + planLabel(plan)}

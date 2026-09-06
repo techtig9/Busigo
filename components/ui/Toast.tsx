@@ -21,9 +21,9 @@ const ToastContext = createContext<ToastContextValue | null>(null);
 let idCounter = 0;
 
 const TONE: Record<Tone, { icon: typeof CheckCircle2; classes: string; iconClass: string }> = {
-  success: { icon: CheckCircle2, classes: "border-success/30", iconClass: "text-success" },
-  error: { icon: XCircle, classes: "border-danger/30", iconClass: "text-danger" },
-  warning: { icon: AlertTriangle, classes: "border-warn/30", iconClass: "text-warn" },
+  success: { icon: CheckCircle2, classes: "border-success/30", iconClass: "text-success-ink" },
+  error: { icon: XCircle, classes: "border-danger/30", iconClass: "text-danger-ink" },
+  warning: { icon: AlertTriangle, classes: "border-warn/30", iconClass: "text-warn-ink" },
   info: { icon: Info, classes: "border-info/30", iconClass: "text-info" },
 };
 

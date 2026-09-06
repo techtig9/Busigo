@@ -171,10 +171,10 @@ export function CommandPalette({ isAdmin }: { isAdmin?: boolean }) {
                       <span
                         className={cn(
                           "shrink-0 rounded px-1.5 py-0.5 text-[10px] font-semibold",
-                          statusTone(r.status) === "success" && "bg-success-soft text-success",
-                          statusTone(r.status) === "danger" && "bg-danger-soft text-danger",
-                          statusTone(r.status) === "pulse" && "bg-pulse/10 text-pulse",
-                          statusTone(r.status) === "warn" && "bg-warn-soft text-warn",
+                          statusTone(r.status) === "success" && "bg-success-soft text-success-ink",
+                          statusTone(r.status) === "danger" && "bg-danger-soft text-danger-ink",
+                          statusTone(r.status) === "pulse" && "bg-pulse/10 text-pulse-ink",
+                          statusTone(r.status) === "warn" && "bg-warn-soft text-warn-ink",
                           statusTone(r.status) === "slate" && "bg-surface text-slate"
                         )}
                       >

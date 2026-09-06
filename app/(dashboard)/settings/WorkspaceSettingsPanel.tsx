@@ -113,7 +113,7 @@ function TeamCard({ canManage, members, invitations }: { canManage: boolean; mem
                         const res = await removeMemberAction(m.id);
                         if (res.error) setError(res.error);
                       })}
-                      className="text-xs text-danger hover:underline"
+                      className="text-xs text-danger-ink hover:underline"
                     >
                       Remove
                     </button>
@@ -137,7 +137,7 @@ function TeamCard({ canManage, members, invitations }: { canManage: boolean; mem
                 {canManage && (
                   <button
                     onClick={() => startTransition(() => { revokeInvitationAction(inv.id); })}
-                    className="text-xs text-danger hover:underline"
+                    className="text-xs text-danger-ink hover:underline"
                   >
                     Revoke
                   </button>
@@ -165,7 +165,7 @@ function TeamCard({ canManage, members, invitations }: { canManage: boolean; mem
           <Button variant="secondary" disabled={pending}>Invite</Button>
         </form>
       )}
-      {error && <p className="mt-2 text-xs text-danger">{error}</p>}
+      {error && <p className="mt-2 text-xs text-danger-ink">{error}</p>}
     </Card>
   );
 }
@@ -197,7 +197,7 @@ function ApiKeysCard({ apiKeys }: { apiKeys: ApiKeyRow[] }) {
               </p>
             </div>
             {!k.revoked_at && (
-              <button onClick={() => startTransition(() => { revokeApiKeyAction(k.id); })} className="text-xs text-danger hover:underline">Revoke</button>
+              <button onClick={() => startTransition(() => { revokeApiKeyAction(k.id); })} className="text-xs text-danger-ink hover:underline">Revoke</button>
             )}
           </div>
         ))}
@@ -232,7 +232,7 @@ function MfaCard({ factors }: { factors: MfaFactor[] }) {
         {factors.map((f) => (
           <div key={f.id} className="flex items-center justify-between rounded border border-hairline px-3 py-2 text-sm">
             <span className="text-ink">{f.friendlyName || "Authenticator app"} <Badge tone={f.status === "verified" ? "success" : "neutral"}>{f.status}</Badge></span>
-            <button onClick={() => startTransition(() => { unenrollFactorAction(f.id); })} className="text-xs text-danger hover:underline">Remove</button>
+            <button onClick={() => startTransition(() => { unenrollFactorAction(f.id); })} className="text-xs text-danger-ink hover:underline">Remove</button>
           </div>
         ))}
         {factors.length === 0 && <p className="text-sm text-slate">No authenticator app connected yet.</p>}
@@ -296,7 +296,7 @@ function MfaCard({ factors }: { factors: MfaFactor[] }) {
           </div>
         )}
       </div>
-      {error && <p className="mt-2 text-xs text-danger">{error}</p>}
+      {error && <p className="mt-2 text-xs text-danger-ink">{error}</p>}
     </Card>
   );
 }

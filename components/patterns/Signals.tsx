@@ -77,7 +77,7 @@ export function EvidenceChip({
 export function ConfidenceBadge({ value, className }: { value: number; className?: string }) {
   const pct = Math.round(value <= 1 ? value * 100 : value);
   const tone =
-    pct >= 75 ? "bg-success-soft text-success" : pct >= 50 ? "bg-warn-soft text-warn" : "bg-surface text-slate";
+    pct >= 75 ? "bg-success-soft text-success-ink" : pct >= 50 ? "bg-warn-soft text-warn-ink" : "bg-surface text-slate";
   return (
     <span
       className={cn("inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[11px] font-semibold", tone, className)}

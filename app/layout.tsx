@@ -20,9 +20,21 @@ const plexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const APP = process.env.NEXT_PUBLIC_APP_NAME || "BusiGo";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://busigo.app";
+
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME || "busigo",
-  description: "Trustworthy workflow automation — trigger, sequence, and traceable runs.",
+  // metadataBase is what lets every page's relative OG/canonical URLs resolve to absolute
+  // ones. Without it Next.js emits a build warning and social cards resolve against the
+  // wrong origin when the app is previewed on a deploy URL.
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${APP} — Your AI Business Operating System`, template: `%s · ${APP}` },
+  description:
+    "An AI business operating system: understand how your business works, find what's worth automating, build it, and keep a human in control of every decision that matters.",
+  applicationName: APP,
+  openGraph: { type: "website", siteName: APP, url: SITE_URL },
+  twitter: { card: "summary_large_image" },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

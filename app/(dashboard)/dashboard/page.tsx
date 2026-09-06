@@ -168,7 +168,7 @@ export default async function DashboardPage() {
       {liveRuns > 0 && (
         <div className="mb-4">
           <SignalPulse active label={`${liveRuns} workflow ${liveRuns === 1 ? "run" : "runs"} executing`} />
-          <p className="mt-1.5 text-xs font-medium text-pulse">
+          <p className="mt-1.5 text-xs font-medium text-pulse-ink">
             {liveRuns} {liveRuns === 1 ? "run" : "runs"} executing now
           </p>
         </div>
@@ -362,7 +362,7 @@ function AttentionRow({
         href={href}
         className="-mx-2 flex items-center gap-2.5 rounded px-2 py-1.5 transition-colors duration-hover hover:bg-surface"
       >
-        <Icon size={15} className={urgent ? "text-warn" : "text-muted"} aria-hidden />
+        <Icon size={15} className={urgent ? "text-warn-ink" : "text-muted"} aria-hidden />
         <span className="flex-1 truncate text-ink">{label}</span>
         <span className="tabular font-semibold text-ink">{count}</span>
         <ArrowRight size={13} className="text-muted" aria-hidden />

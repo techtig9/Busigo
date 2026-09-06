@@ -165,7 +165,7 @@ export function Gallery() {
           <div className="space-y-3">
             <div className="signal-pulse h-1 w-full rounded-full" />
             <div className="flex items-center gap-3">
-              <div className="signal-pulse-node flex h-10 w-10 items-center justify-center rounded-lg border border-pulse bg-panel text-pulse">
+              <div className="signal-pulse-node flex h-10 w-10 items-center justify-center rounded-lg border border-pulse bg-panel text-pulse-ink">
                 <Workflow size={16} />
               </div>
               <div>

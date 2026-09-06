@@ -33,11 +33,11 @@ export function PublicFormClient({ slug, fields }: { slug: string; fields: FormF
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
       {fields.map((field) => (
         <div key={field.key}>
           <label className="mb-1 block text-xs font-semibold text-slate">
-            {field.label || field.key} {field.required && <span className="text-danger">*</span>}
+            {field.label || field.key} {field.required && <span className="text-danger-ink">*</span>}
           </label>
           {field.type === "textarea" ? (
             <textarea
@@ -70,7 +70,7 @@ export function PublicFormClient({ slug, fields }: { slug: string; fields: FormF
       <button
         type="submit"
         disabled={status === "submitting"}
-        className="rounded bg-signal px-4 py-2 text-sm font-semibold text-white hover:bg-signal-dark disabled:opacity-50"
+        className="rounded bg-signal-strong px-4 py-2 text-sm font-semibold text-white hover:bg-signal-dark disabled:opacity-50"
       >
         {status === "submitting" ? "Submitting..." : "Submit"}
       </button>

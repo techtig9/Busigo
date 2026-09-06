@@ -178,7 +178,7 @@ export function ChatWidget() {
                   // non-fatal
                 }
               }}
-              className="text-xs text-slate transition-colors hover:text-danger"
+              className="text-xs text-slate transition-colors hover:text-danger-ink"
             >
               Clear
             </button>
@@ -191,7 +191,7 @@ export function ChatWidget() {
               <div
                 className={cn(
                   "max-w-[85%] whitespace-pre-wrap rounded-lg px-3 py-2 text-sm leading-relaxed animate-[fadeIn_.2s_ease]",
-                  m.role === "user" ? "bg-signal text-white" : "bg-surface text-ink"
+                  m.role === "user" ? "bg-signal-strong text-white" : "bg-surface text-ink"
                 )}
               >
                 {m.content || (streaming && i === messages.length - 1 ? <TypingDots /> : "")}
@@ -243,7 +243,7 @@ export function ChatWidget() {
           <button
             type="submit"
             disabled={streaming || !input.trim()}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-signal text-white transition-colors hover:bg-signal-dark disabled:opacity-40"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded bg-signal-strong text-white transition-colors hover:bg-signal-dark disabled:opacity-40"
             aria-label="Send"
           >
             <Send size={15} />

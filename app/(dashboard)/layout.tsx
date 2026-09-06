@@ -53,7 +53,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           every single page load (WCAG 2.2 AA, bypass blocks). */}
       <a
         href="#main"
-        className="sr-only z-[80] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded focus:bg-signal focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+        className="sr-only z-[80] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded focus:bg-signal-strong focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
       >
         Skip to content
       </a>

@@ -32,10 +32,10 @@ export function ForgotPasswordForm() {
         });
       }}
     >
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
       <div>
-        <Label>Email</Label>
-        <Input name="email" type="email" required autoComplete="email" />
+        <Label htmlFor="forgotpasswordform-email">Email</Label>
+        <Input id="forgotpasswordform-email" name="email" type="email" required autoComplete="email" />
       </div>
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Sending..." : "Send reset link"}

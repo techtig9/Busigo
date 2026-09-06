@@ -110,7 +110,7 @@ export function WorkflowBuilder({ workflow, versions, form, aiActionAllowed }: P
         </div>
       </div>
 
-      {saveError && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{saveError}</p>}
+      {saveError && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{saveError}</p>}
 
       <Card>
         <h2 className="mb-3 font-bold text-ink">Trigger — {workflow.trigger_type}</h2>
@@ -177,7 +177,7 @@ export function WorkflowBuilder({ workflow, versions, form, aiActionAllowed }: P
               startTransition(() => deleteWorkflowAction(workflow.id));
             }
           }}
-          className="text-xs font-semibold text-danger hover:underline"
+          className="text-xs font-semibold text-danger-ink hover:underline"
         >
           Delete workflow
         </button>

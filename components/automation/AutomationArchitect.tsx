@@ -41,7 +41,7 @@ export function AutomationArchitect() {
     </div>
     <Textarea className="mt-4 min-h-28" value={request} onChange={e => setRequest(e.target.value)} placeholder="Example: When a new lead arrives, qualify it, email them, notify sales, and follow up after 24 hours." />
     <div className="mt-2 flex flex-wrap gap-2">{examples.map(x => <button key={x} onClick={() => setRequest(x)} className="rounded-full border border-hairline px-3 py-1 text-xs text-slate hover:border-signal hover:text-signal">{x}</button>)}</div>
-    {error && <p className="mt-3 rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+    {error && <p className="mt-3 rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
     <Button className="mt-4" onClick={generate} disabled={pending || !request.trim()}>{pending ? "Architecting..." : "Generate automation"}<ArrowRight size={16}/></Button>
     {result && <div className="mt-5 rounded border border-hairline bg-panel p-4">
       <div className="flex items-center justify-between"><div><h3 className="font-bold text-ink">Generated plan</h3><p className="text-xs text-slate">Trigger: {result.plan.triggerType} · {result.plan.steps.length} steps · Risk: {result.plan.safety.risk}</p></div><ShieldCheck size={19} className="text-signal" /></div>

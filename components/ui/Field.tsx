@@ -42,7 +42,7 @@ export function Field({
         <label htmlFor={id} className="mb-1.5 block text-xs font-semibold text-slate">
           {label}
           {required && (
-            <span className="ml-0.5 text-danger" aria-hidden>
+            <span className="ml-0.5 text-danger-ink" aria-hidden>
               *
             </span>
           )}
@@ -55,7 +55,7 @@ export function Field({
         </p>
       )}
       {error && (
-        <p id={errorId} role="alert" className="mt-1.5 text-xs font-medium text-danger">
+        <p id={errorId} role="alert" className="mt-1.5 text-xs font-medium text-danger-ink">
           {error}
         </p>
       )}

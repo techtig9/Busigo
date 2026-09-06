@@ -25,8 +25,8 @@ export function ProfileForms({ currentName }: { currentName: string }) {
         }}
         className="space-y-2"
       >
-        <Label>Name</Label>
-        <Input name="name" defaultValue={currentName} />
+        <Label htmlFor="profileforms-name">Name</Label>
+        <Input id="profileforms-name" name="name" defaultValue={currentName} />
         {nameStatus && <p className="text-xs text-slate">{nameStatus}</p>}
         <Button type="submit" variant="secondary" disabled={pendingName}>
           {pendingName ? "Saving..." : "Update name"}
@@ -47,8 +47,8 @@ export function ProfileForms({ currentName }: { currentName: string }) {
         }}
         className="space-y-2 border-t border-hairline pt-6"
       >
-        <Label>New password</Label>
-        <Input name="password" type="password" minLength={8} />
+        <Label htmlFor="profileforms-new-password">New password</Label>
+        <Input id="profileforms-new-password" name="password" type="password" minLength={8} />
         {passwordStatus && <p className="text-xs text-slate">{passwordStatus}</p>}
         <Button type="submit" variant="secondary" disabled={pendingPassword}>
           {pendingPassword ? "Updating..." : "Update password"}

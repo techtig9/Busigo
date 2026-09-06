@@ -92,7 +92,7 @@ export default async function RunDetailPage({ params }: { params: { workflowId: 
       {isRunning && (
         <div className="mb-4">
           <SignalPulse active label="This run is executing" />
-          <p className="mt-1.5 text-xs font-medium text-pulse">Executing now — this page shows the trace so far.</p>
+          <p className="mt-1.5 text-xs font-medium text-pulse-ink">Executing now — this page shows the trace so far.</p>
         </div>
       )}
 
@@ -105,10 +105,10 @@ export default async function RunDetailPage({ params }: { params: { workflowId: 
 
       {failedStep && (
         <div role="alert" className="mb-4 rounded-lg border border-danger/30 bg-danger-soft px-4 py-3">
-          <p className="text-sm font-semibold text-danger">
+          <p className="text-sm font-semibold text-danger-ink">
             Failed at step &ldquo;{failedStep.step_key}&rdquo;
           </p>
-          {failedStep.error && <p className="mt-1 text-sm text-danger/90">{failedStep.error}</p>}
+          {failedStep.error && <p className="mt-1 text-sm text-danger-ink/90">{failedStep.error}</p>}
         </div>
       )}
 
@@ -147,7 +147,7 @@ export default async function RunDetailPage({ params }: { params: { workflowId: 
                   </div>
 
                   {step.error && (
-                    <p className="mt-2 rounded border border-danger/30 bg-danger-soft px-2.5 py-1.5 text-xs text-danger">
+                    <p className="mt-2 rounded border border-danger/30 bg-danger-soft px-2.5 py-1.5 text-xs text-danger-ink">
                       {step.error}
                     </p>
                   )}

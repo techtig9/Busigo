@@ -45,24 +45,28 @@ export function NewWorkflowForm({ templates }: { templates: Template[] }) {
         });
       }}
     >
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
 
       <div>
-        <Label>Name</Label>
-        <Input name="name" required placeholder="e.g. New customer welcome email" />
+        <Label htmlFor="newworkflowfor-name">Name</Label>
+        <Input id="newworkflowfor-name" name="name" required placeholder="e.g. New customer welcome email" />
       </div>
       <div>
-        <Label>Description (optional)</Label>
-        <Textarea name="description" rows={2} />
+        <Label htmlFor="newworkflowfor-description-optional">Description (optional)</Label>
+        <Textarea id="newworkflowfor-description-optional" name="description" rows={2} />
       </div>
 
       <div>
-        <Label>Trigger</Label>
-        <div className="grid grid-cols-3 gap-3">
+        <p id="trigger-group-label" className="mb-1.5 block text-xs font-semibold text-slate">
+          Trigger
+        </p>
+        <div role="radiogroup" aria-labelledby="trigger-group-label" className="grid grid-cols-3 gap-3">
           {TRIGGERS.map((t) => (
             <button
               type="button"
               key={t.value}
+              role="radio"
+              aria-checked={triggerType === t.value}
               onClick={() => setTriggerType(t.value)}
               className={cn(
                 "rounded border p-3 text-left text-sm",
@@ -78,10 +82,14 @@ export function NewWorkflowForm({ templates }: { templates: Template[] }) {
 
       {templates.length > 0 && (
         <div>
-          <Label>Start from a template (optional)</Label>
-          <div className="grid gap-2 sm:grid-cols-2">
+          <p id="template-group-label" className="mb-1.5 block text-xs font-semibold text-slate">
+            Start from a template (optional)
+          </p>
+          <div role="radiogroup" aria-labelledby="template-group-label" className="grid gap-2 sm:grid-cols-2">
             <button
               type="button"
+              role="radio"
+              aria-checked={templateId === ""}
               onClick={() => setTemplateId("")}
               className={cn(
                 "rounded border p-3 text-left text-sm",
@@ -95,6 +103,8 @@ export function NewWorkflowForm({ templates }: { templates: Template[] }) {
               <button
                 type="button"
                 key={t.id}
+                role="radio"
+                aria-checked={templateId === t.id}
                 onClick={() => setTemplateId(t.id)}
                 className={cn(
                   "rounded border p-3 text-left text-sm",

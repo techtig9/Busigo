@@ -14,7 +14,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <html>
       <body className="flex min-h-screen flex-col items-center justify-center bg-canvas px-6 text-center font-sans">
-        <p className="text-sm font-semibold text-danger">Something went wrong</p>
+        <p className="text-sm font-semibold text-danger-ink">Something went wrong</p>
         <h1 className="mt-2 text-2xl font-bold text-ink">This page hit an unexpected error</h1>
         <p className="mt-2 max-w-sm text-sm text-slate">
           Nothing on your account was affected. You can try again, or head back home.
@@ -22,7 +22,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         <div className="mt-6 flex gap-3">
           <button
             onClick={reset}
-            className="rounded bg-signal px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-signal-dark"
+            className="rounded bg-signal-strong px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-signal-dark"
           >
             Try again
           </button>

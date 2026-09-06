@@ -7,7 +7,7 @@ export function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 text-sm text-slate sm:flex-row sm:items-center sm:justify-between">
         <div>
           © {new Date().getFullYear()} {APP_NAME}. Built by{" "}
-          <Link href="/about" className="text-signal hover:underline">
+          <Link href="/about" className="text-signal underline underline-offset-2 hover:text-signal-dark">
             Techtig
           </Link>
           .

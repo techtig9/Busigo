@@ -61,7 +61,7 @@ export function TrendChart({
         <ResponsiveContainer width="100%" height="100%">
           {/* No negative left margin: it pulls the Y axis off the canvas and clips the tick
                 labels ("100%" renders as ")%"). YAxis.width reserves the gutter instead. */}
-            <AreaChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+            <AreaChart data={data} accessibilityLayer={false} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="trendFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="rgb(var(--color-signal))" stopOpacity={0.18} />

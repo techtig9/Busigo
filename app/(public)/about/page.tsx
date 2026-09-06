@@ -27,7 +27,7 @@ export default function AboutPage() {
                 href={l.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-signal hover:underline"
+                className="text-signal underline underline-offset-2 hover:text-signal-dark"
               >
                 {l.label}
               </a>

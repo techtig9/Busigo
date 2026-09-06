@@ -77,7 +77,7 @@ export default async function RunsOverviewPage() {
       {running > 0 && (
         <div className="mb-4">
           <SignalPulse active label={`${running} ${running === 1 ? "run" : "runs"} executing`} />
-          <p className="mt-1.5 text-xs font-medium text-pulse">
+          <p className="mt-1.5 text-xs font-medium text-pulse-ink">
             {running} {running === 1 ? "run" : "runs"} executing now
           </p>
         </div>

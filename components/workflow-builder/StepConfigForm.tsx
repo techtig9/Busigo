@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import type { StepDefinition, StepType } from "@/types/database";
 import { Input, Label, Select, Textarea } from "@/components/ui/Input";
 import { MergeFieldPicker, type AvailableRef } from "./MergeFieldPicker";
@@ -27,13 +28,17 @@ function MergeableField({
   placeholder?: string;
 }) {
   const Field = multiline ? Textarea : Input;
+  // MergeableField is rendered many times per form, so a hardcoded id would produce duplicate
+  // ids and break every association after the first. useId gives each instance its own.
+  const id = useId();
   return (
     <div>
       <div className="mb-1 flex items-center justify-between">
-        <Label>{label}</Label>
+        <Label htmlFor={id}>{label}</Label>
         <MergeFieldPicker available={availableRefs} onInsert={(token) => onChange(`${value || ""}${token}`)} />
       </div>
       <Field
+        id={id}
         value={value || ""}
         placeholder={placeholder}
         rows={multiline ? 3 : undefined}
@@ -53,8 +58,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
         <div className="space-y-3">
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <Label>Method</Label>
-              <Select value={cfg.method || "GET"} onChange={(e) => set({ method: e.target.value })}>
+              <Label htmlFor="stepconfigform-method">Method</Label>
+              <Select id="stepconfigform-method" value={cfg.method || "GET"} onChange={(e) => set({ method: e.target.value })}>
                 {["GET", "POST", "PUT", "PATCH", "DELETE"].map((m) => (
                   <option key={m}>{m}</option>
                 ))}
@@ -84,12 +89,12 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
       return (
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label>Amount</Label>
-            <Input type="number" min={1} value={cfg.amount || ""} onChange={(e) => set({ amount: e.target.value })} />
+            <Label htmlFor="stepconfigform-amount">Amount</Label>
+            <Input id="stepconfigform-amount" type="number" min={1} value={cfg.amount || ""} onChange={(e) => set({ amount: e.target.value })} />
           </div>
           <div>
-            <Label>Unit</Label>
-            <Select value={cfg.unit || "minutes"} onChange={(e) => set({ unit: e.target.value })}>
+            <Label htmlFor="stepconfigform-unit">Unit</Label>
+            <Select id="stepconfigform-unit" value={cfg.unit || "minutes"} onChange={(e) => set({ unit: e.target.value })}>
               <option value="minutes">Minutes</option>
               <option value="hours">Hours</option>
               <option value="days">Days</option>
@@ -104,8 +109,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
           <MergeableField label="Field to check (path, e.g. trigger.amount)" value={cfg.field} onChange={(v) => set({ field: v })} availableRefs={availableRefs} />
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label>Operator</Label>
-              <Select value={cfg.operator || "equals"} onChange={(e) => set({ operator: e.target.value })}>
+              <Label htmlFor="stepconfigform-operator">Operator</Label>
+              <Select id="stepconfigform-operator" value={cfg.operator || "equals"} onChange={(e) => set({ operator: e.target.value })}>
                 <option value="equals">Equals</option>
                 <option value="contains">Contains</option>
                 <option value="greater_than">Greater than</option>
@@ -115,8 +120,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
             </div>
             {cfg.operator !== "exists" && (
               <div>
-                <Label>Value</Label>
-                <Input value={cfg.value || ""} onChange={(e) => set({ value: e.target.value })} />
+                <Label htmlFor="stepconfigform-value">Value</Label>
+                <Input id="stepconfigform-value" value={cfg.value || ""} onChange={(e) => set({ value: e.target.value })} />
               </div>
             )}
           </div>
@@ -128,8 +133,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
       return (
         <div className="space-y-3">
           <div>
-            <Label>Operation</Label>
-            <Select value={cfg.operation || "extract_field"} onChange={(e) => set({ operation: e.target.value })}>
+            <Label htmlFor="stepconfigform-operation">Operation</Label>
+            <Select id="stepconfigform-operation" value={cfg.operation || "extract_field"} onChange={(e) => set({ operation: e.target.value })}>
               <option value="extract_field">Extract field</option>
               <option value="json_parse">JSON parse</option>
               <option value="json_stringify">JSON stringify</option>
@@ -151,8 +156,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
       return (
         <div className="space-y-3">
           <div>
-            <Label>Mode</Label>
-            <Select value={cfg.mode || "summarize"} onChange={(e) => set({ mode: e.target.value })}>
+            <Label htmlFor="stepconfigform-mode">Mode</Label>
+            <Select id="stepconfigform-mode" value={cfg.mode || "summarize"} onChange={(e) => set({ mode: e.target.value })}>
               <option value="summarize">Summarize</option>
               <option value="classify">Classify</option>
               <option value="extract">Extract structured fields</option>
@@ -161,8 +166,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
           </div>
           {cfg.mode === "classify" && (
             <div>
-              <Label>Categories (comma-separated)</Label>
-              <Input
+              <Label htmlFor="stepconfigform-categories-comma-separated">Categories (comma-separated)</Label>
+              <Input id="stepconfigform-categories-comma-separated"
                 value={(cfg.categories || []).join(", ")}
                 onChange={(e) => set({ categories: e.target.value.split(",").map((s: string) => s.trim()).filter(Boolean) })}
               />
@@ -182,8 +187,8 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
       return (
         <div className="space-y-3">
           <div>
-            <Label>Status code</Label>
-            <Input type="number" value={cfg.statusCode || "200"} onChange={(e) => set({ statusCode: e.target.value })} />
+            <Label htmlFor="stepconfigform-status-code">Status code</Label>
+            <Input id="stepconfigform-status-code" type="number" value={cfg.statusCode || "200"} onChange={(e) => set({ statusCode: e.target.value })} />
           </div>
           <MergeableField label="Response body (JSON)" value={cfg.body} onChange={(v) => set({ body: v })} availableRefs={availableRefs} multiline placeholder='{"ok": true}' />
           <p className="text-xs text-slate">Only valid on webhook-triggered workflows. Ends the run after responding.</p>
@@ -191,6 +196,6 @@ export function StepConfigForm({ step, availableRefs, onChange }: Props) {
       );
 
     default:
-      return <p className="text-sm text-danger">Unknown step type.</p>;
+      return <p className="text-sm text-danger-ink">Unknown step type.</p>;
   }
 }

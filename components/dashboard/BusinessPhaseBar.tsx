@@ -7,7 +7,7 @@ export function BusinessPhaseBar({ current = 1 }: { current?: number }) {
       <div className="flex flex-wrap gap-2">
         {BUSINESS_PHASES.map((phase) => (
           <div key={phase.id} className="flex items-center gap-2">
-            <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${phase.id <= current ? "bg-signal text-white" : "bg-surface text-slate"}`}>{phase.id}</span>
+            <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${phase.id <= current ? "bg-signal-strong text-white" : "bg-surface text-slate"}`}>{phase.id}</span>
             <span className="text-sm font-semibold text-ink">{phase.name}</span>
             {phase.id < current && <Badge tone="pulse">Done</Badge>}
           </div>

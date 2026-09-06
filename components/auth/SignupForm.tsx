@@ -26,18 +26,18 @@ export function SignupForm() {
         });
       }}
     >
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
       <div>
-        <Label>Name</Label>
-        <Input name="name" required autoComplete="name" />
+        <Label htmlFor="signupform-name">Name</Label>
+        <Input id="signupform-name" name="name" required autoComplete="name" />
       </div>
       <div>
-        <Label>Email</Label>
-        <Input name="email" type="email" required autoComplete="email" />
+        <Label htmlFor="signupform-email">Email</Label>
+        <Input id="signupform-email" name="email" type="email" required autoComplete="email" />
       </div>
       <div>
-        <Label>Password</Label>
-        <Input name="password" type="password" required minLength={8} autoComplete="new-password" />
+        <Label htmlFor="signupform-password">Password</Label>
+        <Input id="signupform-password" name="password" type="password" required minLength={8} autoComplete="new-password" />
         <p className="mt-1 text-xs text-slate">At least 8 characters.</p>
       </div>
       <Button type="submit" disabled={pending} className="w-full">

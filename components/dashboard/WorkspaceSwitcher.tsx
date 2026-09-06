@@ -80,7 +80,7 @@ export function WorkspaceSwitcher({ current, options }: { current: WorkspaceOpti
                   placeholder="Workspace name"
                   className="w-full rounded border border-hairline bg-surface px-2 py-1 text-sm outline-none focus:border-signal"
                 />
-                <button onClick={submitNewWorkspace} className="shrink-0 rounded bg-signal px-2 py-1 text-xs font-semibold text-white">
+                <button onClick={submitNewWorkspace} className="shrink-0 rounded bg-signal-strong px-2 py-1 text-xs font-semibold text-white">
                   Add
                 </button>
               </div>

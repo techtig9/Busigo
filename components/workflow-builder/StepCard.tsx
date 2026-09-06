@@ -77,7 +77,7 @@ export function StepCard({ step, index, total, availableRefs, liveStatus = "idle
                     <ArrowDown size={14} />
                   </button>
                 </div>
-                <button type="button" onClick={onDelete} className="flex items-center gap-1 rounded p-1.5 text-xs text-danger hover:bg-danger/10">
+                <button type="button" onClick={onDelete} className="flex items-center gap-1 rounded p-1.5 text-xs text-danger-ink hover:bg-danger/10">
                   <Trash2 size={14} /> Remove step
                 </button>
               </div>
@@ -100,11 +100,11 @@ function LiveBadge({ status }: { status: LiveStatus }) {
   };
   const tone: Record<LiveStatus, string> = {
     idle: "",
-    running: "bg-pulse/10 text-pulse",
+    running: "bg-pulse/10 text-pulse-ink",
     success: "bg-signal/10 text-signal",
-    failed: "bg-danger/10 text-danger",
-    stopped_by_filter: "bg-warn/10 text-warn",
-    waiting: "bg-warn/10 text-warn",
+    failed: "bg-danger/10 text-danger-ink",
+    stopped_by_filter: "bg-warn/10 text-warn-ink",
+    waiting: "bg-warn/10 text-warn-ink",
   };
   return <span className={cn("rounded px-2 py-0.5 text-xs font-semibold", tone[status])}>{label[status]}</span>;
 }

@@ -34,23 +34,31 @@ const config: Config = {
         signal: cssVar("--color-signal"),
         "signal-dark": cssVar("--color-signal-dark"),
         "signal-soft": cssVar("--color-signal-soft"),
+        "signal-strong": cssVar("--color-signal-strong"), // fill for solid controls (see globals.css)
+        "signal-ink": cssVar("--color-signal-ink"), // violet that passes as TEXT on signal-soft
         primary: cssVar("--color-signal"),
         "primary-hover": cssVar("--color-signal-dark"),
         "primary-soft": cssVar("--color-signal-soft"),
 
         // --- Accents ---
-        pulse: cssVar("--color-pulse"), // the "live / executing" hue
+        pulse: cssVar("--color-pulse"), // the "live / executing" hue — FILL
+        "pulse-ink": cssVar("--color-pulse-ink"), // cyan that passes as TEXT on light surfaces
         "accent-blue": cssVar("--color-accent-blue"),
         "accent-teal": cssVar("--color-accent-teal"),
 
         // --- Status ---
-        success: cssVar("--color-success"),
+        success: cssVar("--color-success"), // FILL
+        "success-ink": cssVar("--color-success-ink"), // green that passes as TEXT on success-soft
         "success-soft": cssVar("--color-success-soft"),
-        warn: cssVar("--color-warn"),
+        warn: cssVar("--color-warn"), // FILL
+        "warn-ink": cssVar("--color-warn-ink"), // amber that passes as TEXT on light surfaces
         "warn-soft": cssVar("--color-warn-soft"),
         danger: cssVar("--color-danger"),
+        "danger-strong": cssVar("--color-danger-strong"), // FILL under white text
+        "danger-ink": cssVar("--color-danger-ink"), // red that passes as TEXT on danger-soft
         "danger-soft": cssVar("--color-danger-soft"),
-        info: cssVar("--color-info"),
+        info: cssVar("--color-info"), // FILL
+        "info-ink": cssVar("--color-info-ink"), // blue that passes as TEXT on info-soft
         "info-soft": cssVar("--color-info-soft"),
       },
       fontFamily: {

@@ -24,7 +24,7 @@ export function AcceptInviteButton({ token }: { token: string }) {
       >
         Accept invitation
       </Button>
-      {error && <p className="mt-2 text-sm text-danger">{error}</p>}
+      {error && <p className="mt-2 text-sm text-danger-ink">{error}</p>}
     </div>
   );
 }

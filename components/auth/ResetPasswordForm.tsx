@@ -25,10 +25,10 @@ export function ResetPasswordForm() {
         });
       }}
     >
-      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded border border-danger/30 bg-danger/10 px-3 py-2 text-sm text-danger-ink">{error}</p>}
       <div>
-        <Label>New password</Label>
-        <Input name="password" type="password" required minLength={8} autoComplete="new-password" />
+        <Label htmlFor="resetpasswordform-password">New password</Label>
+        <Input id="resetpasswordform-password" name="password" type="password" required minLength={8} autoComplete="new-password" />
       </div>
       <Button type="submit" disabled={pending} className="w-full">
         {pending ? "Updating..." : "Update password"}

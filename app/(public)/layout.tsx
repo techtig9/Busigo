@@ -20,7 +20,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <Link href="/help" className="hidden text-slate transition-colors hover:text-ink sm:inline">Help</Link>
             <ThemeToggle />
             <Link href="/login" className="text-slate transition-colors hover:text-ink">Log in</Link>
-            <Link href="/signup" className="rounded bg-signal px-3 py-1.5 text-white transition-all hover:bg-signal-dark hover:shadow-md active:scale-95">
+            <Link href="/signup" className="rounded bg-signal-strong px-3 py-1.5 text-white transition-all hover:bg-signal-dark hover:shadow-md active:scale-95">
               Sign up free
             </Link>
           </nav>

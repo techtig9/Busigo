@@ -70,7 +70,7 @@ export default async function AIStudioPage() {
           })}
         </div>
         {configured.every((c) => !c.configured) && (
-          <p className="mt-3 text-xs text-danger">No AI provider is configured. Add GROQ_API_KEY at minimum.</p>
+          <p className="mt-3 text-xs text-danger-ink">No AI provider is configured. Add GROQ_API_KEY at minimum.</p>
         )}
       </Card>
 

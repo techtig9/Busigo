@@ -91,7 +91,7 @@ export function TestRunPanel({ workflowId, steps, onLiveUpdate }: Props) {
     <div className="space-y-3">
       <div>
         <Textarea rows={5} value={payload} onChange={(e) => setPayload(e.target.value)} className="font-mono text-xs" />
-        {parseError && <p className="mt-1 text-xs text-danger">{parseError}</p>}
+        {parseError && <p className="mt-1 text-xs text-danger-ink">{parseError}</p>}
       </div>
       <Button onClick={run} disabled={running || steps.length === 0} variant="secondary">
         {running ? "Running..." : "Run test"}
@@ -105,16 +105,16 @@ export function TestRunPanel({ workflowId, steps, onLiveUpdate }: Props) {
               <span
                 className={
                   entry.status === "failed"
-                    ? "text-danger"
+                    ? "text-danger-ink"
                     : entry.status === "stopped_by_filter" || entry.status === "waiting"
-                    ? "text-warn"
+                    ? "text-warn-ink"
                     : "text-signal"
                 }
               >
                 [{entry.status}]
               </span>
               {entry.waitingUntil && <span className="text-slate">waiting until {new Date(entry.waitingUntil).toLocaleTimeString()}</span>}
-              {entry.error && <span className="text-danger">{entry.error}</span>}
+              {entry.error && <span className="text-danger-ink">{entry.error}</span>}
             </div>
           ))}
           {finalStatus && <p className="mt-2 border-t border-hairline pt-2 text-ink">Run finished: {finalStatus}</p>}

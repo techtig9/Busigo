@@ -9,11 +9,11 @@ type Variant = "primary" | "secondary" | "ghost" | "danger" | "subtle";
 type Size = "sm" | "md" | "lg";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
-  primary: "bg-signal text-white border border-signal hover:bg-signal-dark hover:border-signal-dark shadow-xs",
+  primary: "bg-signal-strong text-white border border-signal-strong hover:bg-signal-dark hover:border-signal-dark shadow-xs",
   secondary: "bg-panel text-ink border border-hairline hover:border-hairline-strong hover:bg-surface",
   ghost: "bg-transparent text-ink border border-transparent hover:bg-surface",
-  subtle: "bg-signal-soft text-signal border border-transparent hover:bg-signal/15",
-  danger: "bg-danger text-white border border-danger hover:brightness-95",
+  subtle: "bg-signal-soft text-signal-ink border border-transparent hover:bg-signal/15",
+  danger: "bg-danger-strong text-white border border-danger-strong hover:brightness-110",
 };
 
 // Heights follow spec §6 (inputs/controls 40–44px at default size).
@@ -92,8 +92,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
           <Loader2 size={16} className="animate-spin" aria-hidden />
         </span>
       )}
-      {/* invisible (not removed) so the button's width is unchanged while loading */}
-      <span className={cn("inline-flex items-center gap-2", loading && "invisible")}>{children}</span>
+      {/* opacity-0, NOT `invisible`: visibility:hidden removes the label from the
+          accessibility tree, leaving a loading button with no accessible name at all.
+          Opacity keeps the name and still reserves the original width. */}
+      <span className={cn("inline-flex items-center gap-2", loading && "opacity-0")}>{children}</span>
     </button>
   );
 });

@@ -15,20 +15,20 @@ type Tone =
   | "info";
 
 const TONE_CLASSES: Record<Tone, string> = {
-  signal: "bg-signal-soft text-signal",
-  pulse: "bg-pulse/10 text-pulse",
-  danger: "bg-danger-soft text-danger",
-  warn: "bg-warn-soft text-warn",
+  signal: "bg-signal-soft text-signal-ink",
+  pulse: "bg-pulse/10 text-pulse-ink",
+  danger: "bg-danger-soft text-danger-ink",
+  warn: "bg-warn-soft text-warn-ink",
   slate: "bg-surface text-slate",
-  info: "bg-info-soft text-info",
+  info: "bg-info-soft text-info-ink",
   // Semantic aliases used across dashboard pages. `success`/`good` previously resolved to
   // the same navy as `signal`, which made "succeeded" and "neutral" visually identical —
   // they now use the real success green.
-  success: "bg-success-soft text-success",
-  good: "bg-success-soft text-success",
-  warning: "bg-warn-soft text-warn",
+  success: "bg-success-soft text-success-ink",
+  good: "bg-success-soft text-success-ink",
+  warning: "bg-warn-soft text-warn-ink",
   neutral: "bg-surface text-slate",
-  bad: "bg-danger-soft text-danger",
+  bad: "bg-danger-soft text-danger-ink",
 };
 
 export function Badge({

@@ -65,7 +65,7 @@ export function MenuItem({
     <DropdownMenu.Item
       disabled={disabled}
       onSelect={onSelect}
-      className={cn(ITEM, destructive && "text-danger data-[highlighted]:bg-danger-soft", className)}
+      className={cn(ITEM, destructive && "text-danger-ink data-[highlighted]:bg-danger-soft", className)}
     >
       {children}
     </DropdownMenu.Item>

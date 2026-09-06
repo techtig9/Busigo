@@ -45,8 +45,11 @@ button:focus-visible,
 
   /* Text */
   --color-ink: 23 32 51;              /* #172033 — spec --text */
-  --color-slate: 101 112 135;         /* #657087 — spec --text-secondary */
-  --color-muted: 139 149 167;         /* #8B95A7 — spec --text-muted */
+  --color-slate: 94 104 128;          /* #5E6880 — spec --text-secondary. 4.82:1 on the
+                                         darkest light surface it is used on. */
+  --color-muted: 97 105 124;          /* #61697C — spec --text-muted. 4.86:1 against
+                                         #EEF1F7; #6B7488 passed on white but not on the
+                                         tinted surfaces it actually sits on. */
 
   /* Borders */
   --color-hairline: 228 232 240;      /* #E4E8F0 — spec --border */
@@ -56,20 +59,33 @@ button:focus-visible,
   --color-signal: 109 74 255;         /* #6D4AFF — spec --primary */
   --color-signal-dark: 91 59 234;     /* #5B3BEA — spec --primary-hover */
   --color-signal-soft: 240 236 255;   /* #F0ECFF — spec --primary-soft */
+  --color-signal-strong: 109 74 255;  /* #6D4AFF — fill for solid controls; white text is 5.15:1 */
+  --color-signal-ink: 91 59 234;      /* #5B3BEA — TEXT on signal-soft (5.57:1) */
 
   /* Accents */
-  --color-pulse: 32 184 216;          /* #20B8D8 — spec --accent-cyan, the "live" hue */
+  --color-pulse: 32 184 216;          /* #20B8D8 — spec --accent-cyan, FILL only */
+  --color-pulse-ink: 15 107 126;      /* #0F6B7E — TEXT. Cyan is inherently light: #20B8D8
+                                         as text was 2.36:1 on white. */
   --color-accent-blue: 77 124 254;    /* #4D7CFE — spec --accent-blue */
   --color-accent-teal: 20 184 166;    /* #14B8A6 — spec --accent-teal */
 
   /* Status */
-  --color-success: 22 163 107;        /* #16A36B */
+  --color-success: 22 163 107;        /* #16A36B — FILL */
+  --color-success-ink: 15 122 80;     /* #0F7A50 — TEXT on success-soft (4.93:1; the fill
+                                         hue was 2.98:1 there) */
   --color-success-soft: 234 249 242;  /* #EAF9F2 */
-  --color-warn: 232 163 23;           /* #E8A317 */
+  --color-warn: 232 163 23;           /* #E8A317 — FILL only (bars, badge grounds) */
+  --color-warn-ink: 138 97 0;         /* #8A6100 — TEXT. #E8A317 as text was 2.03:1 on
+                                         warn-soft; this is 4.90:1 worst-case. */
   --color-warn-soft: 255 247 230;     /* #FFF7E6 */
-  --color-danger: 229 83 83;          /* #E55353 */
+  --color-danger: 229 83 83;          /* #E55353 — accent/border */
+  --color-danger-strong: 179 39 30;   /* #B3271E — FILL under white text (6.51:1; white on
+                                         #E55353 was 3.69:1) */
+  --color-danger-ink: 179 39 30;      /* #B3271E — TEXT on danger-soft */
   --color-danger-soft: 255 240 240;   /* #FFF0F0 */
-  --color-info: 59 130 246;           /* #3B82F6 */
+  --color-info: 59 130 246;           /* #3B82F6 — FILL */
+  --color-info-ink: 29 95 209;        /* #1D5FD1 — TEXT on info-soft (5.30:1; the fill hue
+                                         was 3.35:1 there) */
   --color-info-soft: 238 245 255;     /* #EEF5FF */
 
   /* Aurora — violet / blue / cyan (spec §1) */
@@ -96,7 +112,8 @@ button:focus-visible,
 
   --color-ink: 237 239 243;           /* #EDEFF3 */
   --color-slate: 148 158 178;         /* #949EB2 */
-  --color-muted: 122 132 152;         /* #7A8498 */
+  --color-muted: 139 149 167;         /* #8B95A7 — 5.51:1 on the dark panel; the
+                                         original #7A8498 was 4.42:1 and just failed AA. */
 
   --color-hairline: 43 51 71;         /* #2B3347 */
   --color-hairline-strong: 58 68 92;  /* #3A445C */
@@ -105,18 +122,28 @@ button:focus-visible,
   --color-signal: 139 110 255;        /* #8B6EFF */
   --color-signal-dark: 161 139 255;   /* #A18BFF */
   --color-signal-soft: 38 32 66;      /* #262042 */
+  --color-signal-strong: 109 74 255;  /* #6D4AFF — deliberately NOT the lifted #8B6EFF:
+                                         white on that is 3.64:1 and fails AA. */
+  --color-signal-ink: 161 139 255;    /* #A18BFF — TEXT on the dark signal-soft (5.60:1);
+                                         #8B6EFF there was 4.22:1. */
 
   --color-pulse: 61 208 238;          /* #3DD0EE */
+  --color-pulse-ink: 61 208 238;      /* 7.59:1 on dark surfaces */
   --color-accent-blue: 122 158 255;   /* #7A9EFF */
   --color-accent-teal: 45 201 180;    /* #2DC9B4 */
 
   --color-success: 63 191 139;        /* #3FBF8B */
+  --color-success-ink: 63 191 139;    /* 6.34:1 on the dark success ground */
   --color-success-soft: 18 45 35;     /* #122D23 */
   --color-warn: 217 164 65;           /* #D9A441 */
+  --color-warn-ink: 217 164 65;       /* 6.43:1 on dark surfaces — no separate step needed */
   --color-warn-soft: 51 40 18;        /* #332812 */
   --color-danger: 224 106 98;         /* #E06A62 */
+  --color-danger-strong: 179 39 30;   /* #B3271E — keeps white legible on the fill */
+  --color-danger-ink: 224 106 98;     /* readable on the dark danger ground */
   --color-danger-soft: 56 26 26;      /* #381A1A */
   --color-info: 96 156 255;           /* #609CFF */
+  --color-info-ink: 96 156 255;       /* readable on the dark info ground */
   --color-info-soft: 21 33 56;        /* #152138 */
 
   --aurora-opacity: 0.26;
@@ -135,6 +162,18 @@ body {
 h1, h2, h3 {
   font-weight: 700;
   letter-spacing: -0.02em;
+}
+
+/* Inline links inside a block of text carry an underline at rest, not only on hover.
+   Colour alone is a WCAG 1.4.1 failure -- axe measured the violet against the surrounding
+   slate at 1.03:1, far below the 3:1 a colour-only distinction would need. Standalone links
+   (nav items, cards, buttons-as-links) opt out with .no-underline, where position and
+   surrounding chrome already identify them. */
+p > a:not(.no-underline),
+li > a:not(.no-underline) {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
 }
 
 /* Metrics, KPIs and table numerics must not jitter as values update (spec §1). */

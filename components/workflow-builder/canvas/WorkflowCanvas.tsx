@@ -221,7 +221,7 @@ function CanvasInner({ definition, onChange, triggerType, aiActionAllowed }: Pro
         </div>
 
         {validationErrors.length > 0 && (
-          <div className="absolute bottom-3 left-3 right-3 z-10 rounded border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">
+          <div className="absolute bottom-3 left-3 right-3 z-10 rounded border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger-ink">
             {validationErrors[0]}
           </div>
         )}

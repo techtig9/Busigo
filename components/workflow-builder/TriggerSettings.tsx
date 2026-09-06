@@ -15,9 +15,9 @@ export function WebhookTrigger({ workflowId, token }: { workflowId: string; toke
 
   return (
     <div className="space-y-2">
-      <Label>Webhook URL</Label>
+      <Label htmlFor="trigger-webhook-url">Webhook URL</Label>
       <div className="flex gap-2">
-        <Input readOnly value={url} className="font-mono text-xs" />
+        <Input id="trigger-webhook-url" readOnly value={url} className="font-mono text-xs" />
         <Button
           type="button"
           variant="secondary"
@@ -49,8 +49,8 @@ export function WebhookTrigger({ workflowId, token }: { workflowId: string; toke
 export function ScheduleTrigger({ cron, onChange }: { cron: string; onChange: (cron: string) => void }) {
   return (
     <div>
-      <Label>Cron expression</Label>
-      <Input value={cron} onChange={(e) => onChange(e.target.value)} placeholder="0 9 * * *" className="font-mono text-xs" />
+      <Label htmlFor="triggersetting-cron-expression">Cron expression</Label>
+      <Input id="triggersetting-cron-expression" value={cron} onChange={(e) => onChange(e.target.value)} placeholder="0 9 * * *" className="font-mono text-xs" />
       <p className="mt-1 text-xs text-slate">Checked once a minute by /api/cron/tick. Example: &quot;0 9 * * *&quot; runs daily at 09:00 UTC.</p>
     </div>
   );
@@ -71,8 +71,8 @@ export function FormTrigger({ workflowId, initialSlug, initialFields }: { workfl
   return (
     <div className="space-y-3">
       <div>
-        <Label>Form URL slug</Label>
-        <Input value={slug} onChange={(e) => setSlug(e.target.value.replace(/[^a-z0-9-]/g, "-"))} placeholder="contact-us" />
+        <Label htmlFor="triggersetting-form-url-slug">Form URL slug</Label>
+        <Input id="triggersetting-form-url-slug" value={slug} onChange={(e) => setSlug(e.target.value.replace(/[^a-z0-9-]/g, "-"))} placeholder="contact-us" />
         {slug && <p className="mt-1 text-xs text-slate font-mono">{siteUrl}/form/{slug}</p>}
       </div>
       <div className="space-y-2">
@@ -93,7 +93,7 @@ export function FormTrigger({ workflowId, initialSlug, initialFields }: { workfl
               <input type="checkbox" checked={field.required} onChange={(e) => updateField(i, { required: e.target.checked })} />
               required
             </label>
-            <button type="button" onClick={() => removeField(i)} className="text-danger">
+            <button type="button" onClick={() => removeField(i)} className="text-danger-ink">
               <Trash2 size={14} />
             </button>
           </div>

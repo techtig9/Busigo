@@ -69,14 +69,14 @@ export function ConfirmDialog({
     >
       <div className="flex gap-3">
         {destructive && (
-          <span className="mt-0.5 shrink-0 text-danger" aria-hidden>
+          <span className="mt-0.5 shrink-0 text-danger-ink" aria-hidden>
             <AlertTriangle size={18} />
           </span>
         )}
         <p className="text-sm text-slate">{body}</p>
       </div>
       {error && (
-        <p role="alert" className="mt-3 rounded border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger">
+        <p role="alert" className="mt-3 rounded border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-danger-ink">
           {error}
         </p>
       )}

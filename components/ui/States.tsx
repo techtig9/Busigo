@@ -110,7 +110,7 @@ export function ErrorState({
   return (
     <div className={cn("flex flex-col items-center px-6 py-12 text-center", className)} role="alert">
       <span
-        className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-danger-soft text-danger"
+        className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-danger-soft text-danger-ink"
         aria-hidden
       >
         <AlertTriangle size={20} />

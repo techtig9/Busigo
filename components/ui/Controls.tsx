@@ -208,7 +208,7 @@ export function Avatar({
         // The name is conveyed by surrounding text wherever this is used, so the initials
         // are decorative rather than a second announcement of the same name.
         aria-hidden
-        className="flex h-full w-full items-center justify-center bg-signal font-bold text-white"
+        className="flex h-full w-full items-center justify-center bg-signal-strong font-bold text-white"
       >
         {initials || "?"}
       </AvatarPrimitive.Fallback>

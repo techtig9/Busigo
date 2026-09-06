@@ -30,7 +30,7 @@ export function DeadLetterList({ entries, canReplay }: { entries: DeadLetterRow[
 
   return (
     <div className="space-y-2">
-      {error && <p className="text-xs text-danger">{error}</p>}
+      {error && <p className="text-xs text-danger-ink">{error}</p>}
       <ul className="divide-y divide-hairline">
         {entries.map((entry) => (
           <li key={entry.id} className="py-2.5 text-sm">

@@ -61,7 +61,7 @@ export function StepNode({ data, selected }: NodeProps & { data: StepNodeData })
           <Handle type="source" position={Position.Bottom} id="false" style={{ left: "70%" }} className="!h-2.5 !w-2.5 !border-danger !bg-panel" />
           <div className="flex justify-between px-3 pb-1 text-[10px] font-semibold">
             <span className="text-signal">true</span>
-            <span className="text-danger">false</span>
+            <span className="text-danger-ink">false</span>
           </div>
         </>
       ) : (

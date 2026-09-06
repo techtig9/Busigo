@@ -37,7 +37,7 @@ function ProposedAction({ payload }: { payload: unknown }) {
     <div className="mt-3">
       <p className="mb-1.5 text-xs font-semibold text-slate">Proposed action</p>
       {empty ? (
-        <p className="rounded-lg border border-warn/30 bg-warn-soft px-3 py-2 text-xs text-warn">
+        <p className="rounded-lg border border-warn/30 bg-warn-soft px-3 py-2 text-xs text-warn-ink">
           This request carries no action payload. Approve only if you know what it does.
         </p>
       ) : (

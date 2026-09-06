@@ -12,7 +12,7 @@ export default function NotFound() {
         <Link href="/" className="rounded border border-hairline px-4 py-2 text-sm font-semibold text-ink transition-colors hover:border-signal">
           Go home
         </Link>
-        <Link href="/dashboard" className="rounded bg-signal px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-signal-dark">
+        <Link href="/dashboard" className="rounded bg-signal-strong px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-signal-dark">
           Go to dashboard
         </Link>
       </div>
