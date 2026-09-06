@@ -1,14 +1,20 @@
+import Link from "next/link";
+import { ArrowRight, Workflow, Bot, CheckSquare, Lightbulb, Plug } from "lucide-react";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getWorkspaceContext } from "@/lib/workspace/context";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge, statusTone } from "@/components/ui/Badge";
-import { formatDate } from "@/lib/utils";
-import { PLAN_CREDITS, planLabel } from "@/lib/plans";
-import Link from "next/link";
 import { getBusinessContext } from "@/lib/business-os";
-import { BusinessPhaseBar } from "@/components/dashboard/BusinessPhaseBar";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/States";
+import { Progress } from "@/components/ui/Controls";
+import { Metric, MetricStrip } from "@/components/patterns/Metric";
+import { TrendChart, type TrendPoint } from "@/components/patterns/TrendChart";
+import { SignalPulse, AiCallout, EvidenceChip } from "@/components/patterns/Signals";
 import { OnboardingChecklist, type ChecklistItem } from "@/components/dashboard/OnboardingChecklist";
+import { PLAN_CREDITS, planLabel } from "@/lib/plans";
+import { formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +26,41 @@ function timeGreeting(): string {
   return "Good evening";
 }
 
+const DAY_MS = 86_400_000;
+const TREND_DAYS = 14;
+
+/** Daily success rate over the trailing fortnight, from real run rows. */
+function buildTrend(runs: { status: string; started_at: string }[]): TrendPoint[] {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const buckets = new Map<string, { total: number; ok: number }>();
+  for (let i = TREND_DAYS - 1; i >= 0; i--) {
+    buckets.set(new Date(today.getTime() - i * DAY_MS).toDateString(), { total: 0, ok: 0 });
+  }
+
+  for (const r of runs) {
+    const key = new Date(r.started_at);
+    key.setHours(0, 0, 0, 0);
+    const bucket = buckets.get(key.toDateString());
+    if (!bucket) continue;
+    // A run stopped by a filter is a correct outcome, not a failure — counting it against the
+    // success rate would make a well-designed filter look like a broken workflow.
+    if (r.status === "running" || r.status === "waiting") continue;
+    bucket.total += 1;
+    if (r.status === "success" || r.status === "stopped_by_filter") bucket.ok += 1;
+  }
+
+  return Array.from(buckets.entries()).map(([key, b]) => {
+    const d = new Date(key);
+    return {
+      label: d.toLocaleDateString(undefined, { day: "numeric", month: "short" }),
+      value: b.total === 0 ? 0 : Math.round((b.ok / b.total) * 100),
+      detail: b.total === 0 ? "no runs" : `${b.ok}/${b.total} runs`,
+    };
+  });
+}
+
 export default async function DashboardPage() {
   const supabase = createServerSupabase();
   const {
@@ -28,11 +69,14 @@ export default async function DashboardPage() {
   if (!user) return null;
   const { workspace } = await getWorkspaceContext();
 
+  const since = new Date(Date.now() - TREND_DAYS * DAY_MS).toISOString();
+
   const [
     { data: profile },
     { data: workflows },
     { data: sub },
     { data: recentRuns },
+    { data: trendRuns },
     { data: memberCount },
     { data: connectionCount },
     { data: onboardingSetting },
@@ -45,22 +89,56 @@ export default async function DashboardPage() {
       .select("id, status, started_at, workflow_id, workflows!inner(name, workspace_id)")
       .eq("workflows.workspace_id", workspace.id)
       .order("started_at", { ascending: false })
-      .limit(5),
-    supabase.from("workspace_members").select("id", { count: "exact", head: true }).eq("workspace_id", workspace.id).then((r) => ({ data: r.count ?? 0 })),
-    supabase.from("connections").select("id", { count: "exact", head: true }).eq("workspace_id", workspace.id).then((r) => ({ data: r.count ?? 0 })),
-    supabase.from("workspace_settings").select("value").eq("workspace_id", workspace.id).eq("key", "onboarding_dismissed").maybeSingle(),
+      .limit(6),
+    supabase
+      .from("workflow_runs")
+      .select("status, started_at, workflows!inner(workspace_id)")
+      .eq("workflows.workspace_id", workspace.id)
+      .gte("started_at", since)
+      .order("started_at", { ascending: false })
+      .limit(1000),
+    supabase
+      .from("workspace_members")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspace.id)
+      .then((r) => ({ data: r.count ?? 0 })),
+    supabase
+      .from("connections")
+      .select("id", { count: "exact", head: true })
+      .eq("workspace_id", workspace.id)
+      .then((r) => ({ data: r.count ?? 0 })),
+    supabase
+      .from("workspace_settings")
+      .select("value")
+      .eq("workspace_id", workspace.id)
+      .eq("key", "onboarding_dismissed")
+      .maybeSingle(),
   ]);
 
-  const os = await getBusinessContext(user.id);
+  // Previously called with `user.id`. getBusinessContext filters on workspace_id, so passing a
+  // user id matched nothing and the agents / opportunities / approvals / KPI panels on this
+  // page were permanently empty regardless of the workspace's real contents. Every other call
+  // site in the app already passed workspace.id.
+  const os = await getBusinessContext(workspace.id);
+
   const plan = (sub?.plan as any) || "free";
   const creditsTotal = PLAN_CREDITS[plan as keyof typeof PLAN_CREDITS] ?? 500;
   const creditsRemaining = sub?.credits_remaining ?? 0;
-  const pct = Math.min(100, Math.round((creditsRemaining / creditsTotal) * 100));
 
   const workflowCount = workflows?.length ?? 0;
   const publishedCount = workflows?.filter((w) => w.status === "published").length ?? 0;
   const hasRun = (recentRuns?.length ?? 0) > 0;
   const firstName = (profile?.name || "there").split(" ")[0];
+
+  const trend = buildTrend(trendRuns || []);
+  const finished = (trendRuns || []).filter((r: any) => r.status !== "running" && r.status !== "waiting");
+  const succeeded = finished.filter((r: any) => r.status === "success" || r.status === "stopped_by_filter").length;
+  const successRate = finished.length ? Math.round((succeeded / finished.length) * 100) : null;
+  const failures = finished.filter((r: any) => r.status === "failed").length;
+  const liveRuns = (recentRuns || []).filter((r: any) => r.status === "running").length;
+
+  const topOpportunity = os.opportunities[0];
+  const activeAgents = os.agents.filter((a: any) => a.status === "active").length;
 
   const onboardingSteps: ChecklistItem[] = [
     { label: "Create your first workflow", done: workflowCount > 0, href: "/workflows/new" },
@@ -71,82 +149,224 @@ export default async function DashboardPage() {
   ];
   const showOnboarding = !onboardingSetting?.value && onboardingSteps.some((s) => !s.done);
 
-
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-      <BusinessPhaseBar current={os.business ? (os.agents.length ? 4 : 2) : 1} />
+    <>
+      <PageHeader
+        title={`${timeGreeting()}, ${firstName}`}
+        description="What's happening across your workspace right now."
+        actions={
+          <>
+            <Button variant="secondary" href="/opportunities">
+              View opportunities
+            </Button>
+            <Button href="/workflows/new">New workflow</Button>
+          </>
+        }
+      />
 
-      <div className="flex items-center justify-between animate-slide-up">
-        <div>
-          <h1 className="text-2xl font-bold text-ink">
-            {timeGreeting()}, {firstName} <span aria-hidden>👋</span>
-          </h1>
-          <p className="mt-0.5 text-sm text-slate">Here&apos;s what&apos;s happening with your workflows.</p>
-        </div>
-        <Button href="/workflows/new">New workflow</Button>
-      </div>
-
-      {showOnboarding && <OnboardingChecklist items={onboardingSteps} />}
-
-      <div className="grid gap-4 sm:grid-cols-4">
-        <Card className="animate-slide-up stagger-1 transition-shadow hover:shadow-md">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate">Workflows</p>
-          <p className="mt-1 text-2xl font-bold text-ink">{workflowCount}</p>
-        </Card>
-        <Card className="animate-slide-up stagger-2 transition-shadow hover:shadow-md">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate">Plan</p>
-          <p className="mt-1 text-2xl font-bold text-ink">{planLabel(plan)}</p>
-        </Card>
-        <Card className="animate-slide-up stagger-3 transition-shadow hover:shadow-md">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate">Business OS score</p>
-          <p className="mt-1 text-2xl font-bold text-ink">{Math.min(100, (os.business ? 30 : 0) + Math.min(30, os.opportunities.length * 3) + Math.min(20, os.kpis.length * 2) + (os.agents.length ? 20 : 0))}/100</p>
-        </Card>
-        <Card className="animate-slide-up stagger-3 transition-shadow hover:shadow-md">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate">Credits remaining</p>
-          <p className="mt-1 text-2xl font-bold text-ink">
-            {creditsRemaining.toLocaleString()} <span className="text-sm font-normal text-slate">/ {creditsTotal.toLocaleString()}</span>
+      {/* Live-execution indicator: present only while runs are genuinely in flight. */}
+      {liveRuns > 0 && (
+        <div className="mb-4">
+          <SignalPulse active label={`${liveRuns} workflow ${liveRuns === 1 ? "run" : "runs"} executing`} />
+          <p className="mt-1.5 text-xs font-medium text-pulse">
+            {liveRuns} {liveRuns === 1 ? "run" : "runs"} executing now
           </p>
-          <div className="mt-2 h-1.5 w-full rounded-full bg-surface">
-            <div className="h-1.5 rounded-full bg-signal transition-all duration-700" style={{ width: `${pct}%` }} />
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <Card className="animate-slide-up stagger-4">
-          <div className="flex items-center justify-between"><h2 className="font-bold text-ink">AI workforce</h2><Link href="/workforce" className="text-sm text-signal hover:underline">Manage</Link></div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-            <div className="rounded bg-surface p-3"><span className="text-slate">Agents</span><p className="font-bold text-ink">{os.agents.length}</p></div>
-            <div className="rounded bg-surface p-3"><span className="text-slate">Approvals</span><p className="font-bold text-ink">{os.approvals.length}</p></div>
-          </div>
-        </Card>
-        <Card className="animate-slide-up stagger-4">
-          <div className="flex items-center justify-between"><h2 className="font-bold text-ink">Top opportunity</h2><Link href="/opportunities" className="text-sm text-signal hover:underline">View all</Link></div>
-          {os.opportunities[0] ? <><p className="mt-3 font-semibold text-ink">{os.opportunities[0].title}</p><p className="mt-1 text-sm text-slate">Priority {os.opportunities[0].priority_score}/100</p></> : <p className="mt-3 text-sm text-slate">Complete Business Brain to discover your first automation opportunity.</p>}
-        </Card>
-      </div>
-
-      <Card className="animate-slide-up stagger-4">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-bold text-ink">Recent runs</h2>
-          <Link href="/runs" className="text-sm text-signal hover:underline">View all</Link>
         </div>
-        {!recentRuns || recentRuns.length === 0 ? (
-          <p className="text-sm text-slate">No runs yet — publish a workflow and trigger it to see activity here.</p>
-        ) : (
-          <ul className="divide-y divide-hairline">
-            {recentRuns.map((run: any) => (
-              <li key={run.id} className="flex items-center justify-between py-2.5 text-sm transition-colors hover:bg-surface/60">
-                <div>
-                  <p className="font-semibold text-ink">{run.workflows?.name}</p>
-                  <p className="text-xs text-slate">{formatDate(run.started_at)}</p>
-                </div>
-                <Badge tone={statusTone(run.status)}>{run.status}</Badge>
-              </li>
-            ))}
+      )}
+
+      {showOnboarding && (
+        <div className="mb-4">
+          <OnboardingChecklist items={onboardingSteps} />
+        </div>
+      )}
+
+      <MetricStrip className="mb-4">
+        <Metric label="Workflows" value={workflowCount} hint={`${publishedCount} published`} />
+        <Metric
+          label="Automation success"
+          value={successRate === null ? "—" : successRate}
+          suffix={successRate === null ? undefined : "%"}
+          hint={successRate === null ? "no finished runs yet" : `last ${TREND_DAYS} days`}
+        />
+        <Metric label="Failures" value={failures} hint={`last ${TREND_DAYS} days`} />
+        <Metric label="Open approvals" value={os.approvals.length} hint={os.approvals.length ? "needs review" : "all clear"} />
+        <Metric
+          label="Credits"
+          value={creditsRemaining.toLocaleString()}
+          suffix={`/ ${creditsTotal.toLocaleString()}`}
+          footer={
+            <Progress
+              value={creditsRemaining}
+              max={creditsTotal}
+              label="Credits remaining"
+              tone={creditsRemaining / creditsTotal < 0.15 ? "danger" : creditsRemaining / creditsTotal < 0.35 ? "warn" : "signal"}
+            />
+          }
+        />
+      </MetricStrip>
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <div>
+              <CardTitle>Automation health</CardTitle>
+              <CardDescription>
+                Daily success rate across finished runs. Runs stopped by a filter count as successful — that is the
+                filter working, not a failure.
+              </CardDescription>
+            </div>
+            <Link href="/runs" className="shrink-0 text-sm text-signal hover:underline">
+              All runs
+            </Link>
+          </CardHeader>
+          <TrendChart data={trend} unit="%" yMax={100} title={`Daily automation success rate, last ${TREND_DAYS} days`} />
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Needs attention</CardTitle>
+          </CardHeader>
+          <ul className="space-y-2.5 text-sm">
+            <AttentionRow
+              icon={CheckSquare}
+              label="Approvals waiting"
+              count={os.approvals.length}
+              href="/approvals"
+              urgent={os.approvals.length > 0}
+            />
+            <AttentionRow icon={Workflow} label="Failed runs" count={failures} href="/runs" urgent={failures > 0} />
+            <AttentionRow
+              icon={Plug}
+              label="Connected apps"
+              count={connectionCount ?? 0}
+              href="/connections"
+              urgent={(connectionCount ?? 0) === 0}
+            />
+            <AttentionRow
+              icon={Bot}
+              label="Active agents"
+              count={activeAgents}
+              href="/workforce"
+              urgent={os.agents.length > 0 && activeAgents === 0}
+            />
           </ul>
-        )}
-      </Card>
-    </div>
+        </Card>
+      </div>
+
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle>Top opportunity</CardTitle>
+            <Link href="/opportunities" className="shrink-0 text-sm text-signal hover:underline">
+              View all
+            </Link>
+          </CardHeader>
+          {topOpportunity ? (
+            <>
+              <AiCallout
+                action={
+                  <Button size="sm" variant="secondary" href="/opportunities">
+                    Review
+                  </Button>
+                }
+              >
+                <span className="font-semibold">{topOpportunity.title}</span>
+                <span className="mt-0.5 block text-xs text-slate">
+                  {topOpportunity.impact} impact · {topOpportunity.effort} effort · priority{" "}
+                  {topOpportunity.priority_score}/100
+                </span>
+              </AiCallout>
+              {topOpportunity.description && (
+                <p className="mt-3 text-sm text-slate">{topOpportunity.description}</p>
+              )}
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                <EvidenceChip label="Business Brain" href="/business-brain" />
+                {topOpportunity.recommended_agent && (
+                  <EvidenceChip label={`Agent: ${topOpportunity.recommended_agent}`} href="/workforce" />
+                )}
+              </div>
+            </>
+          ) : (
+            <EmptyState
+              icon={Lightbulb}
+              title="No opportunities yet"
+              body="BusiGo ranks automation opportunities once Business Brain knows how your business operates."
+              action={{ label: "Open Business Brain", href: "/business-brain" }}
+              className="py-8"
+            />
+          )}
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Recent runs</CardTitle>
+            <Link href="/runs" className="shrink-0 text-sm text-signal hover:underline">
+              View all
+            </Link>
+          </CardHeader>
+          {!recentRuns || recentRuns.length === 0 ? (
+            <EmptyState
+              icon={Workflow}
+              title="No runs yet"
+              body="Publish a workflow and trigger it — every execution is traced here, step by step."
+              action={{ label: "New workflow", href: "/workflows/new" }}
+              className="py-8"
+            />
+          ) : (
+            <ul className="divide-y divide-hairline">
+              {recentRuns.map((run: any) => (
+                <li key={run.id}>
+                  <Link
+                    href={`/runs/${run.workflow_id}/${run.id}`}
+                    className="-mx-2 flex items-center justify-between gap-3 rounded px-2 py-2.5 text-sm transition-colors duration-hover hover:bg-surface"
+                  >
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium text-ink">{run.workflows?.name}</span>
+                      <span className="block text-xs text-muted">{formatDate(run.started_at)}</span>
+                    </span>
+                    <StatusBadge status={run.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+      </div>
+
+      <p className="mt-4 text-xs text-muted">
+        Workspace plan: <span className="font-medium text-slate">{planLabel(plan)}</span> ·{" "}
+        <Link href="/billing" className="text-signal hover:underline">
+          Manage billing
+        </Link>
+      </p>
+    </>
+  );
+}
+
+function AttentionRow({
+  icon: Icon,
+  label,
+  count,
+  href,
+  urgent,
+}: {
+  icon: typeof Workflow;
+  label: string;
+  count: number;
+  href: string;
+  urgent?: boolean;
+}) {
+  return (
+    <li>
+      <Link
+        href={href}
+        className="-mx-2 flex items-center gap-2.5 rounded px-2 py-1.5 transition-colors duration-hover hover:bg-surface"
+      >
+        <Icon size={15} className={urgent ? "text-warn" : "text-muted"} aria-hidden />
+        <span className="flex-1 truncate text-ink">{label}</span>
+        <span className="tabular font-semibold text-ink">{count}</span>
+        <ArrowRight size={13} className="text-muted" aria-hidden />
+      </Link>
+    </li>
   );
 }

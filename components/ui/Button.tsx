@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Slot } from "@radix-ui/react-slot";
@@ -34,17 +35,20 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean;
 }
 
-export function Button({
-  variant = "primary",
-  size = "md",
-  className,
-  href,
-  loading = false,
-  asChild = false,
-  children,
-  disabled,
-  ...props
-}: ButtonProps) {
+/**
+ * forwardRef is REQUIRED, not decorative.
+ *
+ * Radix's `asChild` pattern (used by every Tooltip.Trigger, DropdownMenu.Trigger,
+ * Dialog.Trigger and Dialog.Close in this codebase) clones its child and passes it a ref.
+ * A plain function component silently drops that ref, and React warns
+ * "Function components cannot be given refs" — with the practical consequence that the
+ * trigger cannot be measured or focused, so tooltip/menu positioning and focus restoration
+ * break. Every component intended to sit inside `asChild` must forward its ref.
+ */
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
+  { variant = "primary", size = "md", className, href, loading = false, asChild = false, children, disabled, ...props },
+  ref
+) {
   const classes = cn(
     "relative inline-flex items-center justify-center whitespace-nowrap rounded font-semibold",
     "transition-all duration-hover ease-out active:scale-[0.98]",
@@ -69,14 +73,20 @@ export function Button({
 
   if (asChild) {
     return (
-      <Slot className={classes} {...props}>
+      <Slot ref={ref} className={classes} {...props}>
         {children}
       </Slot>
     );
   }
 
   return (
-    <button className={classes} disabled={disabled || loading} aria-busy={loading || undefined} {...props}>
+    <button
+      ref={ref}
+      className={classes}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
+      {...props}
+    >
       {loading && (
         <span className="absolute inset-0 flex items-center justify-center">
           <Loader2 size={16} className="animate-spin" aria-hidden />
@@ -86,22 +96,19 @@ export function Button({
       <span className={cn("inline-flex items-center gap-2", loading && "invisible")}>{children}</span>
     </button>
   );
-}
+});
 
 /** Icon-only control. `label` is required — it becomes the accessible name (spec §6:
  *  "icon-only controls require tooltip and accessible label"). Pair with <Tooltip> for the
- *  visual affordance. */
-export function IconButton({
-  label,
-  variant = "ghost",
-  size = "md",
-  className,
-  children,
-  ...props
-}: Omit<ButtonProps, "href" | "asChild"> & { label: string }) {
+ *  visual affordance. Forwards its ref for the same `asChild` reason as Button above. */
+export const IconButton = forwardRef<
+  HTMLButtonElement,
+  Omit<ButtonProps, "href" | "asChild"> & { label: string }
+>(function IconButton({ label, variant = "ghost", size = "md", className, children, ...props }, ref) {
   const sizeClass = size === "sm" ? "h-8 w-8" : size === "lg" ? "h-11 w-11" : "h-10 w-10";
   return (
     <button
+      ref={ref}
       aria-label={label}
       className={cn(
         "inline-flex shrink-0 items-center justify-center rounded",
@@ -117,4 +124,4 @@ export function IconButton({
       {children}
     </button>
   );
-}
+});

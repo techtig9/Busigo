@@ -14,7 +14,21 @@ import { Checkbox, Switch, RadioGroup, Separator, Avatar, Progress } from "@/com
 import { Skeleton, EmptyState, ErrorState } from "@/components/ui/States";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { useToast } from "@/components/ui/Toast";
+import { Metric, MetricStrip } from "@/components/patterns/Metric";
+import { TrendChart, BarList } from "@/components/patterns/TrendChart";
+import { SignalPulse, EvidenceChip, ConfidenceBadge, ImpactEffort, AiCallout } from "@/components/patterns/Signals";
 import { Settings, Trash2, Plus, MoreHorizontal, Workflow } from "lucide-react";
+
+const TREND = [
+  { label: "1 Mar", value: 92, detail: "23/25 runs" },
+  { label: "2 Mar", value: 88, detail: "22/25 runs" },
+  { label: "3 Mar", value: 100, detail: "31/31 runs" },
+  { label: "4 Mar", value: 76, detail: "19/25 runs" },
+  { label: "5 Mar", value: 84, detail: "21/25 runs" },
+  { label: "6 Mar", value: 96, detail: "24/25 runs" },
+  { label: "7 Mar", value: 100, detail: "28/28 runs" },
+  { label: "8 Mar", value: 94, detail: "30/32 runs" },
+];
 
 const TOKENS = [
   ["canvas", "bg-canvas"],
@@ -158,6 +172,66 @@ export function Gallery() {
                 <p className="text-sm font-semibold text-ink">AI Qualify</p>
                 <p className="text-xs text-slate">Executing…</p>
               </div>
+            </div>
+          </div>
+        </Section>
+
+        <Section
+          title="Metrics & charts"
+          note="Single-series, single-hue by design: the validator scored the success-green / danger-red pair at ΔE 5.1 under deuteranopia — below the 6.0 floor — so an adjacent success/failed stack was rejected. Violet was validated against both real surfaces."
+        >
+          <MetricStrip className="mb-4">
+            <Metric label="Workflows" value={12} hint="8 published" />
+            <Metric label="Automation success" value={94} suffix="%" delta={3} deltaLabel="vs last week" />
+            <Metric label="Failures" value={4} delta={-12} goodDirection="down" deltaLabel="vs last week" />
+            <Metric label="Open approvals" value={3} hint="needs review" />
+            <Metric label="Credits" value="18,402" suffix="/ 25,000" />
+          </MetricStrip>
+          <div className="grid gap-4 lg:grid-cols-3">
+            <Card className="lg:col-span-2">
+              <CardTitle>Automation health</CardTitle>
+              <CardDescription>Daily success rate — hover for detail, or expand the table.</CardDescription>
+              <div className="mt-3">
+                <TrendChart data={TREND} unit="%" yMax={100} title="Daily automation success rate" />
+              </div>
+            </Card>
+            <Card>
+              <CardTitle>Runs by workflow</CardTitle>
+              <div className="mt-3">
+                <BarList
+                  items={[
+                    { label: "Lead qualification", value: 128 },
+                    { label: "Invoice follow-up", value: 94 },
+                    { label: "Weekly digest", value: 41 },
+                    { label: "Churn watch", value: 12 },
+                  ]}
+                />
+              </div>
+            </Card>
+          </div>
+        </Section>
+
+        <Section title="Contextual AI & provenance" note="Every AI claim can point at what it came from — the 'glass box' half of the identity.">
+          <div className="space-y-4">
+            <AiCallout action={<Button size="sm" variant="secondary">Review</Button>}>
+              <span className="font-semibold">2 quick wins available.</span> High impact with low build effort — these
+              are the ones to do first.
+            </AiCallout>
+            <div className="flex flex-wrap items-center gap-2">
+              <EvidenceChip label="Business Brain" href="#" />
+              <EvidenceChip label="14 runs, last 7 days" />
+              <EvidenceChip label="Agent: Revenue Analyst" href="#" />
+              <ConfidenceBadge value={0.82} />
+              <ConfidenceBadge value={0.61} />
+              <ConfidenceBadge value={0.34} />
+            </div>
+            <div className="max-w-sm">
+              <ImpactEffort impact="high" effort="low" />
+            </div>
+            <div className="max-w-sm space-y-2">
+              <p className="text-xs font-medium text-slate">Signal Pulse — active vs idle</p>
+              <SignalPulse active label="Workflow executing" />
+              <SignalPulse active={false} />
             </div>
           </div>
         </Section>
