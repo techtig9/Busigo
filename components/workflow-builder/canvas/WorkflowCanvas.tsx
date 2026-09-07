@@ -8,6 +8,7 @@ import {
   Controls,
   MiniMap,
   useNodesState,
+  useReactFlow,
   useEdgesState,
   addEdge,
   type Connection,
@@ -66,9 +67,13 @@ interface Props {
   liveStatuses?: Record<string, { status: string }>;
 }
 
-/** Imperative surface so a node library outside the canvas can add to it. */
+/** Imperative surface so the toolbar and node library outside the canvas can drive it. */
 export interface WorkflowCanvasHandle {
   addStep: (type: StepType) => void;
+  copySelection: () => void;
+  pasteClipboard: () => void;
+  autoLayout: () => void;
+  hasClipboard: boolean;
 }
 
 const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner(
@@ -81,6 +86,8 @@ const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showPalette, setShowPalette] = useState(false);
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [clipboard, setClipboard] = useState<{ nodes: Node<StepNodeData>[]; edges: Edge[] } | null>(null);
+  const { fitView } = useReactFlow();
 
   // Re-seed from the definition when the parent signals a wholesale replacement. Guarded on
   // resetKey rather than on `definition` itself: `definition` changes on every keystroke as
@@ -153,7 +160,7 @@ const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner
   const onNodeClick: NodeMouseHandler = useCallback((_, node) => setSelectedId(node.id), []);
   const onPaneClick = useCallback(() => setSelectedId(null), []);
 
-  const addStep = (type: StepType) => {
+  const addStep = useCallback((type: StepType) => {
     const key = nextKey(nodes.map((n) => n.id));
     const lowestY = nodes.reduce((max, n) => Math.max(max, n.position.y), 0);
     const newNode: Node<StepNodeData> = {
@@ -167,7 +174,7 @@ const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner
     setShowPalette(false);
     setSelectedId(key);
     emitChange(nextNodes, edges);
-  };
+  }, [nodes, edges, setNodes, emitChange]);
 
   const updateSelectedConfig = (config: Record<string, any>) => {
     if (!selectedId) return;
@@ -186,7 +193,126 @@ const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner
     emitChange(nextNodes, nextEdges);
   };
 
-  useImperativeHandle(ref, () => ({ addStep }), [nodes, edges]); // eslint-disable-line react-hooks/exhaustive-deps
+  /**
+   * Copy / paste.
+   *
+   * Copies the SELECTED nodes plus only the edges whose two ends are both in the selection —
+   * pasting an edge that points at a node you did not copy would produce a dangling
+   * reference the executor cannot follow. Keys are regenerated and the internal edges are
+   * remapped onto the new keys, so a pasted branch keeps its shape without colliding with the
+   * originals.
+   */
+  const copySelection = useCallback(() => {
+    const chosen = nodes.filter((n) => n.selected || n.id === selectedId);
+    if (chosen.length === 0) return;
+    const ids = new Set(chosen.map((n) => n.id));
+    setClipboard({
+      nodes: chosen.map((n) => ({ ...n })),
+      edges: edges.filter((e) => ids.has(e.source) && ids.has(e.target)).map((e) => ({ ...e })),
+    });
+  }, [nodes, edges, selectedId]);
+
+  const pasteClipboard = useCallback(() => {
+    if (!clipboard || clipboard.nodes.length === 0) return;
+    const existing = nodes.map((n) => n.id);
+    const idMap = new Map<string, string>();
+    const pastedNodes = clipboard.nodes.map((n, i) => {
+      const key = nextKey([...existing, ...Array.from(idMap.values())]);
+      idMap.set(n.id, key);
+      return {
+        ...n,
+        id: key,
+        selected: true,
+        // Offset so the copy is visibly distinct from what it was copied from.
+        position: { x: n.position.x + 40, y: n.position.y + 40 + i * 4 },
+        data: { ...n.data, config: { ...n.data.config } },
+      };
+    });
+    const pastedEdges = clipboard.edges.map((e) => ({
+      ...e,
+      id: `${idMap.get(e.source)}->${idMap.get(e.target)}-${Math.random().toString(36).slice(2, 7)}`,
+      source: idMap.get(e.source)!,
+      target: idMap.get(e.target)!,
+    }));
+    const nextNodes = [...nodes.map((n) => ({ ...n, selected: false })), ...pastedNodes];
+    const nextEdges = [...edges, ...pastedEdges];
+    setNodes(nextNodes);
+    setEdges(nextEdges);
+    emitChange(nextNodes, nextEdges);
+  }, [clipboard, nodes, edges, setNodes, setEdges, emitChange]);
+
+  /**
+   * Auto-layout.
+   *
+   * A breadth-first pass from the entry node: depth becomes the row, position within the
+   * depth becomes the column. Deliberately simple rather than a full force-directed layout —
+   * these graphs are small and mostly linear with occasional branches, and a predictable
+   * top-to-bottom result is easier to read than an optimally-packed one. Nodes unreachable
+   * from the entry (a fragment someone is still wiring up) are parked in a final row instead
+   * of being dropped.
+   */
+  const autoLayout = useCallback(() => {
+    const graph = flowToGraph(nodes, edges);
+    const targets = new Set(graph.edges.map((e) => e.target));
+    const roots = graph.nodes.filter((n) => !targets.has(n.key)).map((n) => n.key);
+    const depth = new Map<string, number>();
+    const queue: string[] = [...(roots.length ? roots : graph.nodes.slice(0, 1).map((n) => n.key))];
+    queue.forEach((k) => depth.set(k, 0));
+
+    while (queue.length) {
+      const current = queue.shift()!;
+      const d = depth.get(current) ?? 0;
+      for (const e of graph.edges.filter((x) => x.source === current)) {
+        if (depth.has(e.target)) continue;
+        depth.set(e.target, d + 1);
+        queue.push(e.target);
+      }
+    }
+
+    const maxDepth = Math.max(0, ...Array.from(depth.values()));
+    const perRow = new Map<number, string[]>();
+    for (const n of graph.nodes) {
+      const d = depth.get(n.key) ?? maxDepth + 1; // unreachable fragments go in a final row
+      perRow.set(d, [...(perRow.get(d) ?? []), n.key]);
+    }
+
+    const COL = 300;
+    const ROW = 150;
+    const positions = new Map<string, { x: number; y: number }>();
+    for (const [d, keys] of perRow) {
+      keys.forEach((key, i) => {
+        const offset = (i - (keys.length - 1) / 2) * COL;
+        positions.set(key, { x: 260 + offset, y: 40 + d * ROW });
+      });
+    }
+
+    const nextNodes = nodes.map((n) => ({ ...n, position: positions.get(n.id) ?? n.position }));
+    setNodes(nextNodes);
+    emitChange(nextNodes, edges);
+    window.setTimeout(() => fitView({ duration: 300, padding: 0.2 }), 0);
+  }, [nodes, edges, setNodes, emitChange, fitView]);
+
+  useImperativeHandle(ref, () => ({ addStep, copySelection, pasteClipboard, autoLayout, hasClipboard: !!clipboard }), [
+    addStep,
+    clipboard,
+    copySelection,
+    pasteClipboard,
+    autoLayout,
+  ]);
+
+  // Canvas-scoped copy/paste shortcuts. Ignored while focus is in a field so copying text out
+  // of a node's config box doesn't clone the node instead.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
+      if (!(e.metaKey || e.ctrlKey)) return;
+      if (e.key.toLowerCase() === "c") copySelection();
+      if (e.key.toLowerCase() === "v") pasteClipboard();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [copySelection, pasteClipboard]);
 
   const selectedNode = nodes.find((n) => n.id === selectedId);
   const availableRefs: AvailableRef[] = useMemo(() => {
@@ -213,6 +339,8 @@ const CanvasInner = forwardRef<WorkflowCanvasHandle, Props>(function CanvasInner
           onNodeClick={onNodeClick}
           onPaneClick={onPaneClick}
           deleteKeyCode={["Backspace", "Delete"]}
+          multiSelectionKeyCode={["Meta", "Shift", "Control"]}
+          selectionKeyCode="Shift"
           fitView
           proOptions={{ hideAttribution: true }}
         >

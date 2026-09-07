@@ -25,6 +25,7 @@ import {
   LifeBuoy,
   User,
   Shield,
+  Rocket,
 } from "lucide-react";
 
 export interface NavItem {
@@ -116,6 +117,7 @@ export const ADMIN_ITEM: NavItem = {
 
 /** Reachable destinations that aren't in the sidebar but should be findable via ⌘K. */
 export const EXTRA_NAV_ITEMS: NavItem[] = [
+  { href: "/onboarding", label: "Get started", icon: Rocket, keywords: "onboarding setup wizard first steps tutorial" },
   { href: "/profile", label: "Profile", icon: User, keywords: "account name avatar timezone theme password" },
   { href: "/workflows/new", label: "New workflow", icon: Workflow, keywords: "create add build automation" },
 ];

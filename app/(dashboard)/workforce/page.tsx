@@ -1,54 +1,165 @@
+import { Bot, UserCheck } from "lucide-react";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getBusinessContext } from "@/lib/business-os";
 import { getWorkspaceContext } from "@/lib/workspace/context";
 import { seedRecommendedAgentsAction, setAgentPolicyAction } from "@/lib/actions/business-os";
-import { saveAgentPermissionsAction, createAgentTaskAction, handoffAgentTaskAction, completeAgentTaskAction } from "@/lib/actions/workforce";
-import { BusinessPhaseBar } from "@/components/dashboard/BusinessPhaseBar";
-import { AgentControls } from "@/components/workforce/AgentControls";
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { Input, Textarea } from "@/components/ui/Input";
+import {
+  saveAgentPermissionsAction,
+  createAgentTaskAction,
+  handoffAgentTaskAction,
+  completeAgentTaskAction,
+} from "@/lib/actions/workforce";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { StatusBadge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/States";
+import { Metric, MetricStrip } from "@/components/patterns/Metric";
+import { AiCallout } from "@/components/patterns/Signals";
+import { AgentCard, type AgentRow } from "@/components/workforce/AgentCard";
+import { formatDate } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export default async function WorkforcePage() {
   const supabase = createServerSupabase();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { workspace } = await getWorkspaceContext();
   const { agents } = await getBusinessContext(workspace.id);
+
   const [{ data: tasks }, { data: permissions }, { data: handoffs }, { data: actions }] = await Promise.all([
-    supabase.from("agent_tasks").select("*").eq("workspace_id", workspace.id).order("created_at", { ascending: false }).limit(30),
+    supabase.from("agent_tasks").select("*").eq("workspace_id", workspace.id).order("created_at", { ascending: false }).limit(120),
     supabase.from("agent_permissions").select("*").eq("workspace_id", workspace.id),
     supabase.from("agent_handoffs").select("*").eq("workspace_id", workspace.id).eq("status", "open").order("created_at", { ascending: false }).limit(20),
-    supabase.from("ai_actions").select("*").eq("workspace_id", workspace.id).order("created_at", { ascending: false }).limit(20),
+    supabase.from("ai_actions").select("*").eq("workspace_id", workspace.id).order("created_at", { ascending: false }).limit(60),
   ]);
+
   const taskRows = tasks || [];
+  const actionRows = actions || [];
+  const handoffRows = handoffs || [];
   const openTasks = taskRows.filter((t: any) => !["completed", "cancelled"].includes(t.status)).length;
-  return <div className="space-y-6">
-    <PageHeader title="AI Workforce Command Center" description="Deploy specialist AI workers with explicit permissions, tasks, memory boundaries, human handoffs and auditable actions." />
-    <BusinessPhaseBar current={4}/>
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Card><p className="text-xs uppercase text-slate">Agents</p><p className="mt-2 text-2xl font-bold text-ink">{agents.length}</p></Card>
-      <Card><p className="text-xs uppercase text-slate">Active</p><p className="mt-2 text-2xl font-bold text-ink">{agents.filter((a:any) => a.status === "active").length}</p></Card>
-      <Card><p className="text-xs uppercase text-slate">Open tasks</p><p className="mt-2 text-2xl font-bold text-ink">{openTasks}</p></Card>
-      <Card><p className="text-xs uppercase text-slate">Human handoffs</p><p className="mt-2 text-2xl font-bold text-ink">{(handoffs || []).length}</p></Card>
-    </div>
-    <Card><div className="flex flex-wrap items-center justify-between gap-3"><div><h2 className="font-bold text-ink">Recommended workforce</h2><p className="text-sm text-slate">All agents start with approval-required autonomy. Grant only the capabilities each role actually needs.</p></div><form action={seedRecommendedAgentsAction}><Button type="submit">Create / refresh agents</Button></form></div></Card>
-    <div className="grid gap-4 lg:grid-cols-2">{agents.map((a: any) => {
-      const agentPermissions = (permissions || []).filter((p: any) => p.agent_id === a.id);
-      const agentTasks = taskRows.filter((t: any) => t.agent_id === a.id).slice(0, 5);
-      return <Card key={a.id}>
-        <div className="flex items-start justify-between gap-3"><div><h3 className="font-bold text-ink">{a.name}</h3><p className="mt-1 text-xs uppercase tracking-wide text-slate">{a.agent_type}</p></div><Badge tone={a.status === "active" ? "pulse" : "warn"}>{a.status}</Badge></div>
-        <p className="mt-3 text-sm text-slate">{a.description}</p>
-        <div className="mt-4 flex flex-wrap gap-2"><Badge tone="neutral">Autonomy: {a.autonomy_level}</Badge><Badge tone="neutral">Permissions: {agentPermissions.filter((p:any)=>p.allowed).length}</Badge><Badge tone="neutral">Tasks: {agentTasks.length}</Badge></div>
-        <AgentControls agent={a} permissions={agentPermissions} saveAction={saveAgentPermissionsAction} />
-        <div className="mt-4 flex flex-wrap gap-2"><form action={async () => { "use server"; await setAgentPolicyAction(a.id, "approval_required", a.status === "active" ? "paused" : "active"); }}><Button type="submit" variant="secondary">{a.status === "active" ? "Pause" : "Activate safely"}</Button></form><form action={async () => { "use server"; await setAgentPolicyAction(a.id, "low_risk_auto", a.status); }}><Button type="submit" variant="ghost">Allow low-risk auto</Button></form></div>
-        <form action={createAgentTaskAction} className="mt-4 grid gap-2 border-t border-hairline pt-4"><input type="hidden" name="agent_id" value={a.id}/><Input name="title" required placeholder="Give this agent a task…" /><Textarea name="description" placeholder="Optional context or expected outcome" /><Button type="submit">Queue task</Button></form>
-      </Card>;
-    })}</div>
-    {handoffs && handoffs.length > 0 && <Card><h2 className="font-bold text-ink">Human handoffs</h2><div className="mt-3 space-y-3">{handoffs.map((h:any)=><div key={h.id} className="rounded border border-hairline p-3"><p className="text-sm text-ink">{h.reason}</p><p className="mt-1 text-xs text-slate">Waiting for human review</p></div>)}</div></Card>}
-    <Card><h2 className="font-bold text-ink">Recent agent tasks</h2>{taskRows.length === 0 ? <p className="mt-3 text-sm text-slate">No tasks yet.</p> : <div className="mt-3 space-y-2">{taskRows.slice(0, 12).map((t:any)=><div key={t.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-hairline p-3"><div><p className="text-sm font-semibold text-ink">{t.title}</p><p className="text-xs text-slate">{t.status} · {t.priority}</p></div>{!["completed","cancelled"].includes(t.status) && <div className="flex gap-2"><form action={async()=>{ "use server"; await completeAgentTaskAction(t.id); }}><Button type="submit" variant="secondary">Complete</Button></form><form action={handoffAgentTaskAction}><input type="hidden" name="agent_id" value={t.agent_id}/><input type="hidden" name="task_id" value={t.id}/><input type="hidden" name="reason" value="Human review requested from workforce command center"/><Button type="submit" variant="ghost">Handoff</Button></form></div>}</div>)}</div>}</Card>
-    <Card><h2 className="font-bold text-ink">Recent AI actions</h2>{(!actions || actions.length === 0) ? <p className="mt-3 text-sm text-slate">No agent actions recorded yet. Executions will appear here once agents are connected to live workflows.</p> : <div className="mt-3 space-y-2">{actions.map((x:any)=><div key={x.id} className="flex items-center justify-between rounded border border-hairline p-3"><span className="text-sm text-ink">{x.action_type}</span><Badge tone={x.status === "success" ? "pulse" : "warn"}>{x.status}</Badge></div>)}</div>}</Card>
-  </div>;
+  const activeAgents = agents.filter((a: any) => a.status === "active").length;
+
+  // Server actions are passed down as props so the cards can stay client components without
+  // each one re-importing the action module.
+  async function setPolicy(agentId: string, autonomy: "approval_required" | "low_risk_auto", status: "draft" | "active" | "paused" | "error") {
+    "use server";
+    await setAgentPolicyAction(agentId, autonomy, status);
+  }
+  async function completeTask(taskId: string) {
+    "use server";
+    await completeAgentTaskAction(taskId);
+  }
+
+  return (
+    <>
+      <PageHeader
+        title="AI Workforce"
+        description="Specialist agents with explicit permissions, queued tasks, human handoffs and an auditable record of every action."
+        actions={
+          <form action={seedRecommendedAgentsAction}>
+            <Button type="submit" variant={agents.length ? "secondary" : "primary"}>
+              {agents.length ? "Refresh recommended agents" : "Create recommended agents"}
+            </Button>
+          </form>
+        }
+      />
+
+      {agents.length > 0 && (
+        <MetricStrip className="mb-4 lg:grid-cols-4">
+          <Metric label="Agents" value={agents.length} hint={`${activeAgents} active`} />
+          <Metric label="Open tasks" value={openTasks} />
+          <Metric label="Human handoffs" value={handoffRows.length} goodDirection="down" />
+          <Metric label="Recorded actions" value={actionRows.length} hint="most recent 60" />
+        </MetricStrip>
+      )}
+
+      {handoffRows.length > 0 && (
+        <AiCallout className="mb-4" action={<Button size="sm" variant="secondary" href="/approvals">Review</Button>}>
+          <span className="font-semibold">
+            {handoffRows.length} {handoffRows.length === 1 ? "task needs" : "tasks need"} a human.
+          </span>{" "}
+          An agent stopped and asked rather than guessing.
+        </AiCallout>
+      )}
+
+      {agents.length === 0 ? (
+        <Card>
+          <EmptyState
+            icon={Bot}
+            title="No agents yet"
+            body="BusiGo can create a recommended set of specialist agents — sales, support, operations and finance — all starting on approval-required autonomy so none of them can act without you."
+            action={{ label: "Create recommended agents", href: "#" }}
+          />
+          <form action={seedRecommendedAgentsAction} className="flex justify-center pb-2">
+            <Button type="submit">Create recommended agents</Button>
+          </form>
+        </Card>
+      ) : (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {agents.map((a: any) => (
+            <AgentCard
+              key={a.id}
+              agent={a as AgentRow}
+              permissions={(permissions || []).filter((p: any) => p.agent_id === a.id)}
+              tasks={taskRows.filter((t: any) => t.agent_id === a.id)}
+              actions={actionRows.filter((x: any) => x.agent_id === a.id)}
+              setPolicyAction={setPolicy}
+              savePermissionsAction={saveAgentPermissionsAction}
+              createTaskAction={createAgentTaskAction}
+              completeTaskAction={completeTask}
+              handoffTaskAction={handoffAgentTaskAction}
+            />
+          ))}
+        </div>
+      )}
+
+      {handoffRows.length > 0 && (
+        <Card className="mt-4">
+          <CardHeader>
+            <div>
+              <CardTitle>Human handoffs</CardTitle>
+              <CardDescription>Work an agent escalated rather than completing on its own.</CardDescription>
+            </div>
+          </CardHeader>
+          <ul className="divide-y divide-hairline">
+            {handoffRows.map((h: any) => (
+              <li key={h.id} className="flex items-start gap-2.5 py-3">
+                <UserCheck size={15} className="mt-0.5 shrink-0 text-warn-ink" aria-hidden />
+                <div className="min-w-0">
+                  <p className="text-sm text-ink">{h.reason}</p>
+                  <p className="text-xs text-muted">Waiting for human review · {formatDate(h.created_at)}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {actionRows.length > 0 && (
+        <Card className="mt-4">
+          <CardHeader>
+            <div>
+              <CardTitle>Recent agent actions</CardTitle>
+              <CardDescription>Everything agents have actually done, most recent first.</CardDescription>
+            </div>
+          </CardHeader>
+          <ul className="divide-y divide-hairline">
+            {actionRows.slice(0, 12).map((x: any) => (
+              <li key={x.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                <div className="min-w-0">
+                  <p className="truncate text-ink">{x.action_type}</p>
+                  <p className="text-xs text-muted">{formatDate(x.created_at)}</p>
+                </div>
+                <StatusBadge status={x.status} />
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+    </>
+  );
 }

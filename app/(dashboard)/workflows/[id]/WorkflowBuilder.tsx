@@ -14,6 +14,10 @@ import {
   Loader2,
   PanelBottomClose,
   PanelBottomOpen,
+  Copy,
+  ClipboardPaste,
+  LayoutGrid,
+  Smartphone,
 } from "lucide-react";
 import type { StepDefinition, TriggerType, FormField, StepType } from "@/types/database";
 import { WorkflowCanvas, type WorkflowCanvasHandle } from "@/components/workflow-builder/canvas/WorkflowCanvas";
@@ -245,6 +249,39 @@ export function WorkflowBuilder({ workflow, versions, form, aiActionAllowed }: P
               </IconButton>
             </Tooltip>
 
+            <span className="mx-0.5 hidden h-5 w-px shrink-0 bg-hairline sm:block" aria-hidden />
+
+            <Tooltip content="Copy selected (⌘C)">
+              <IconButton
+                label="Copy selected nodes"
+                size="sm"
+                className="hidden sm:inline-flex"
+                onClick={() => canvasRef.current?.copySelection()}
+              >
+                <Copy size={15} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Paste (⌘V)">
+              <IconButton
+                label="Paste nodes"
+                size="sm"
+                className="hidden sm:inline-flex"
+                onClick={() => canvasRef.current?.pasteClipboard()}
+              >
+                <ClipboardPaste size={15} />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="Tidy layout">
+              <IconButton
+                label="Auto-layout the graph"
+                size="sm"
+                className="hidden sm:inline-flex"
+                onClick={() => canvasRef.current?.autoLayout()}
+              >
+                <LayoutGrid size={15} />
+              </IconButton>
+            </Tooltip>
+
             <Button size="sm" variant="secondary" onClick={() => setConsoleOpen((v) => !v)}>
               {consoleOpen ? <PanelBottomClose size={14} /> : <PanelBottomOpen size={14} />}
               <span className="hidden sm:inline">Test</span>
@@ -322,12 +359,21 @@ export function WorkflowBuilder({ workflow, versions, form, aiActionAllowed }: P
             </div>
             <div className="mt-auto border-t border-hairline p-3">
               <p className="text-[11px] leading-relaxed text-muted">
-                Click a node to add it, then drag from a node&apos;s bottom handle to connect it to the next one.
+                Click a node to add it, then drag from a node&apos;s bottom handle to connect it. Shift-drag to select
+                several, ⌘C / ⌘V to duplicate them, and ⌘Z to undo.
               </p>
             </div>
           </aside>
 
           <div className="min-w-0 flex-1">
+            {/* Editing a graph on a phone is genuinely poor: the properties inspector alone is
+                320px. Rather than pretend otherwise, say so once above the canvas — the canvas
+                itself stays fully pannable and inspectable, so viewing a workflow on a phone
+                still works. */}
+            <p className="flex items-center gap-2 border-b border-hairline bg-surface px-3 py-2 text-xs text-slate md:hidden">
+              <Smartphone size={13} className="shrink-0" aria-hidden />
+              You can pan and inspect here. Editing is much easier on a larger screen.
+            </p>
             <WorkflowCanvas
               ref={canvasRef}
               definition={definition}

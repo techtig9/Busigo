@@ -35,6 +35,13 @@ export function OnboardingChecklist({ items }: { items: ChecklistItem[] }) {
           </button>
         </div>
       </div>
+      <p className="mb-3 text-sm text-slate">
+        Six steps to your first working automation.{" "}
+        <Link href="/onboarding" className="font-semibold text-signal hover:underline">
+          Open the guided setup
+        </Link>
+        .
+      </p>
       <ul className="space-y-2">
         {items.map((item) => (
           <li key={item.label}>

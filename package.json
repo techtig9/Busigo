@@ -12,7 +12,9 @@
     "qa": "node scripts/qa-integrity.mjs",
     "qa:phase9": "node scripts/phase9-smoke.mjs",
     "qa:final": "node scripts/final-production-qa.mjs",
-    "qa:ai": "node scripts/ai-provider-failover-smoke.mjs"
+    "qa:ai": "node scripts/ai-provider-failover-smoke.mjs",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@paddle/paddle-js": "^1.4.0",
@@ -45,6 +47,7 @@
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

@@ -74,7 +74,7 @@ export function WorkspaceSettingsPanel({
   );
 }
 
-function TeamCard({ canManage, members, invitations }: { canManage: boolean; members: MemberRow[]; invitations: InvitationRow[] }) {
+export function TeamCard({ canManage, members, invitations }: { canManage: boolean; members: MemberRow[]; invitations: InvitationRow[] }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -170,7 +170,7 @@ function TeamCard({ canManage, members, invitations }: { canManage: boolean; mem
   );
 }
 
-function ApiKeysCard({ apiKeys }: { apiKeys: ApiKeyRow[] }) {
+export function ApiKeysCard({ apiKeys }: { apiKeys: ApiKeyRow[] }) {
   const [pending, startTransition] = useTransition();
   const [revealed, setRevealed] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -218,7 +218,7 @@ function ApiKeysCard({ apiKeys }: { apiKeys: ApiKeyRow[] }) {
   );
 }
 
-function MfaCard({ factors }: { factors: MfaFactor[] }) {
+export function MfaCard({ factors }: { factors: MfaFactor[] }) {
   const [pending, startTransition] = useTransition();
   const [enrollment, setEnrollment] = useState<{ factorId: string; qrCode: string; secret: string } | null>(null);
   const [code, setCode] = useState("");
@@ -301,7 +301,7 @@ function MfaCard({ factors }: { factors: MfaFactor[] }) {
   );
 }
 
-function SessionsCard() {
+export function SessionsCard() {
   const [pending, startTransition] = useTransition();
   const [done, setDone] = useState(false);
 

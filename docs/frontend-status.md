@@ -1,6 +1,6 @@
 # BusiGo Frontend — Status
 
-**Branch:** `claude/busigo-frontend-audit-2p22eo` · **Last updated:** 2026-09-06
+**Branch:** `claude/busigo-frontend-audit-2p22eo` · **Last updated:** 2026-09-07
 
 A factual record of what the frontend redesign delivered, what it deliberately did not, and
 what a reviewer should check next. Companion to `docs/design-decision.md`, which records why
@@ -17,11 +17,13 @@ unless noted.
 |---|---|
 | `typecheck` | pass, 0 errors |
 | `lint` | pass, 0 errors, 0 warnings |
-| `test` | 120 / 120 |
+| `test` (unit) | 120 / 120 |
+| `e2e` (Playwright, production build) | 28 / 28 · desktop + mobile |
 | `qa`, `qa:phase9`, `qa:final`, `qa:ai` | all pass |
 | `build` | pass |
 | axe serious/critical violations — 10 public routes × 2 themes | **0** (from 28) |
 | axe serious/critical violations — dashboard UI via `/dev/*` harnesses × 2 themes | **0** (from 8) |
+| Screens on the design system | **all 42 routes** |
 | Console errors — 10 public routes × 2 themes | **0** |
 | Horizontal overflow — 10 routes × 6 widths (1440/1280/1024/768/390/360) | **0** |
 | Non-token colours in `app/` + `components/` | **0** |
@@ -60,63 +62,68 @@ Pulse degrades to a static cyan state indicator so the meaning survives without 
 
 **Phase 6 — Workflow Builder.** Three-panel layout, node library rail, undo/redo (whole-
 definition snapshots, ⌘Z / ⇧⌘Z), debounced autosave with a live indicator and a
-`beforeunload` guard, ⌘S, collapsible test console, trigger/version drawers.
+`beforeunload` guard, ⌘S, collapsible test console, trigger/version drawers, copy/paste
+(⌘C / ⌘V, copying only edges whose both ends are in the selection), shift-drag multi-select,
+and a breadth-first auto-layout that parks unreachable fragments rather than dropping them.
 
 **Phase 7 — Copilot and AI Studio.** Copilot is a docked, non-modal complementary landmark
 with an `aria-live` region for streamed replies. AI Studio gained the spec's tabs, with the
 page still a Server Component.
 
-**Phase 8 (partial) — Landing and SEO.** All twelve specified sections, metadataBase, Open
-Graph, canonical, and JSON-LD generated from the same source the visible FAQ renders. No
+**Phase 5 — Screens.** All 42 routes are on the design system. Rebuilt to their specified
+layouts: Command Center, Opportunities, Approvals, Runs, Run detail, Workflows,
+Agent Orchestration, Workforce (agent cards with a detail drawer), Insights (real charts from
+real run and KPI data), Business Brain (tabbed, with a completeness score) and Settings
+(tabbed, with API keys omitted rather than shown disabled for non-Security-Admins).
+
+**Phase 8 — Onboarding, landing and SEO.** A six-step resumable onboarding wizard at
+`/onboarding` whose every step performs its real action and whose completion is derived from
+real state — a business row, a live connection, a published workflow — never from "user
+clicked Next". Landing page rebuilt to all twelve specified sections, with metadataBase, Open
+Graph, canonical and JSON-LD generated from the same source the visible FAQ renders. No
 fabricated logos, testimonials, statistics, certifications or ratings markup.
 
 **Phase 9 — Accessibility and responsive.** 28 → 0 serious/critical violations. See the
 fill/ink token split below.
 
-**Phase 10 — QA.** The table above.
+**Phase 10 — QA.** The table above, plus a committed Playwright suite (`npm run e2e`) that
+runs against a production build rather than the dev server — dev mode's eval-based source maps
+and React Refresh behave differently under this app's CSP, and a dev-server suite would have
+missed the `/login` hydration failure entirely.
 
 ---
 
 ## Not complete
 
-Stated plainly, because these are real gaps rather than oversights.
+Two items remain, both requiring infrastructure this environment does not have.
 
-### Screens on the design system but not architecturally redesigned
+### Signed-in E2E journeys
 
-Sixteen screens were brought onto the tokens, `PageHeader`, design-system form controls and the
-single container width, but still present as stacks of cards rather than the layouts the
-specification describes:
+`e2e/public.spec.ts` covers every route reachable without a session — 28 tests, desktop and
+mobile. The specification's signed-in journeys (signup → workspace → onboarding → connect →
+Business Brain → AI analysis → workflow → simulate → publish → trigger → inspect run →
+failure/retry → approval → AI failover → billing → invite → role restriction → MFA → data
+export → workspace isolation) are **specified but not implemented**, because they cannot pass
+without a live Supabase project, seeded credentials and provider keys. `e2e/README.md` lists
+exactly what to set and how to split the specs once staging exists.
 
-> Workforce · Insights · Business Intelligence · Measure & Grow · Advanced Growth ·
-> Autonomous Ops · Automation Center · Marketplace · Connect & Data · Connections · Forms ·
-> Security & Governance · Scale & Reliability · Admin · Profile · Business Brain
+Writing them against no backend would produce tests that skip, or assert nothing — worse than
+their absence, because a green suite would then mean less than it does now.
 
-They are consistent and accessible; they are not yet the agent-cards-with-detail-tabs,
-three-panel Automation Center, or tabbed Business Brain the spec asks for. `TrendChart` exists
-and is used on the Command Center, but Insights, Business Intelligence and Growth do not yet
-plot anything.
+### Dashboard screens rendering against real data
 
-### Not started
-
-- **Onboarding wizard** (spec §3, §5). Still the five-item dismissible checklist; the
-  eleven-step resumable flow with a completion score is not built. `workspace_settings` already
-  has somewhere to persist progress.
-- **Settings tabs** (spec §27). Settings is one column of cards, not the eight-tab structure.
-- **Builder**: copy/paste, multi-select and auto-layout. Undo/redo, autosave, shortcuts, the
-  node library, minimap and zoom/pan are done.
-- **Mobile read-only canvas gate** described in `design-decision.md` §8. The canvas is usable
-  but not gated below `1024`.
-- **E2E tests.** None. Playwright was used for verification from a scratchpad directory and
-  deliberately **not** added as a project dependency, since it was outside approved scope.
+Every dashboard route is a Server Component behind Supabase auth. They are verified by
+typecheck, lint, production build, data-contract review, and — for the shell, design system
+and builder — by real browser interaction through the `/dev/*` harnesses. They have **not**
+been seen rendering real rows from a real database.
 
 ### Out of scope by design
 
 - **New workflow node types** (Branch, Merge, Loop, Wait-for-Event, Error Handler, Human
   Approval, App Action). The executor implements seven step types; rendering nodes that cannot
-  run is exactly the mock behaviour the spec forbids. This is an engine change.
+  run is exactly the mock behaviour the spec forbids. This is an engine change, not a frontend
+  one.
 - **Figma-derived visuals.** See `design-decision.md` §1.
-
----
 
 ## Notable defects found and fixed
 
