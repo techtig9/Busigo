@@ -2,6 +2,19 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
+/**
+ * Whether this deployment has Supabase credentials at all.
+ *
+ * A deployment with no credentials (a preview of the marketing site, a fresh clone before
+ * .env.local is filled in) would otherwise construct a client from `undefined!` and throw on
+ * every single request, including the public pages that need no database at all. Callers use
+ * this to degrade FAIL-CLOSED: public routes render, everything auth-gated redirects to
+ * /login, and nothing protected is ever served.
+ */
+export function isSupabaseConfigured(): boolean {
+  return !!process.env.NEXT_PUBLIC_SUPABASE_URL && !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+}
+
 // Server-side Supabase client bound to the current request's cookies. Respects RLS
 // as the logged-in user — use this in Server Components, Server Actions, and route handlers
 // that act on behalf of the signed-in user.

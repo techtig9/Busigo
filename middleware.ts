@@ -33,6 +33,21 @@ function isPublicPath(pathname: string) {
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request: { headers: request.headers } });
+  const { pathname } = request.nextUrl;
+
+  // No Supabase credentials configured (a marketing-only preview, or a clone before
+  // .env.local is filled in). Constructing a client from undefined values throws on EVERY
+  // request, so the whole site 500s -- including the public pages that need no database.
+  //
+  // Degrade FAIL-CLOSED instead: public routes render normally, and everything else is sent
+  // to /login. Nothing auth-gated is ever served, so a misconfigured production deploy is
+  // visibly broken for signed-in surfaces rather than silently open.
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    if (isPublicPath(pathname)) return response;
+    const url = new URL("/login", request.url);
+    url.searchParams.set("unconfigured", "1");
+    return NextResponse.redirect(url);
+  }
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -55,8 +70,6 @@ export async function middleware(request: NextRequest) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
 
   if (!user && !isPublicPath(pathname)) {
     const redirectUrl = new URL("/login", request.url);
