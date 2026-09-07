@@ -69,9 +69,20 @@ including production — shows a Vercel login wall to anyone who is not a member
 Vercel team. The deployment is fine; the site is simply gated in front of Next.js. Turn
 it off under *Project → Settings → Deployment Protection* to share a link publicly.
 
-**Paused projects.** A paused Vercel project keeps serving its last deployment but stops
-building on git push, silently — pushes land on GitHub and nothing happens. If a commit
-is on `main` and no deployment appears, check whether the project is paused before
+**A stale git link survives a repository being recreated.** Vercel stores the link to a
+repository by its numeric GitHub id, not by `owner/name`. Delete a GitHub repo and push a
+new one under the same name and it gets a *new* id, so the Vercel project keeps pointing
+at an id that no longer exists. The symptom is silent: commits land on `main`, GitHub
+shows them, and Vercel never builds — no error, no failed deployment, nothing in the
+activity log. Nothing about the commit is wrong.
+
+That is exactly what happened to the original `busigo` project here: it is linked to
+repository id `1323653363`, while `techtig9/Busigo` is now id `1350472673`. The fix is to
+disconnect and reconnect the repository under *Project → Settings → Git*, or to create a
+fresh project against the current repository — which is what `busigo-preview` is.
+
+**Paused projects** produce the same silent symptom for a different reason: a paused
+project keeps serving its last deployment but stops building on push. Check both before
 looking for anything wrong with the commit.
 
 ## Verifying a deployment
@@ -91,3 +102,19 @@ done
 Expect `200` for the first group and `307` for the second. A `500` anywhere in the first
 group means a build-time variable is missing; a `200` anywhere in the second means the
 auth guard is not running, which is a security problem, not a cosmetic one.
+
+## Live reference deployment
+
+`busigo-preview` (project `prj_SYyuqDHs2daIXODH79EZoJ4y7tSF`) builds `main` on every push
+and runs with **no environment variables at all**, on purpose — it is the continuously
+verified proof that the "nothing configured" row of the table above behaves as described.
+
+- https://busigo-preview.vercel.app
+
+Verified on the live deployment: `/dashboard` serves the login page with the
+"no database connected" notice and `x-matched-path: /login`, so the auth guard runs in
+production and not just locally. The response carries the full security header set —
+`Content-Security-Policy`, `Strict-Transport-Security`, `X-Frame-Options: DENY`,
+`X-Content-Type-Options: nosniff`, `Referrer-Policy`, `Permissions-Policy` — and the
+production CSP contains no `'unsafe-eval'`. Its `connect-src` is bare `'self'`, which is
+the build-time `NEXT_PUBLIC_SUPABASE_URL` behaviour described above, visible in the wild.
