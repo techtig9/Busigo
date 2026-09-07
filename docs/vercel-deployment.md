@@ -76,10 +76,23 @@ at an id that no longer exists. The symptom is silent: commits land on `main`, G
 shows them, and Vercel never builds — no error, no failed deployment, nothing in the
 activity log. Nothing about the commit is wrong.
 
-That is exactly what happened to the original `busigo` project here: it is linked to
-repository id `1323653363`, while `techtig9/Busigo` is now id `1350472673`. The fix is to
-disconnect and reconnect the repository under *Project → Settings → Git*, or to create a
-fresh project against the current repository — which is what `busigo-preview` is.
+That is what happened to the original `busigo` project here: it is linked to repository id
+`1323653363`, while `techtig9/Busigo` is now id `1350472673`.
+
+Creating a fresh project against the current repository is **not** sufficient on its own,
+and it is worth knowing why. `busigo-preview` was created against `techtig9/Busigo` and
+built correctly on creation, with full commit metadata — so Vercel can *read* the
+repository through the account's OAuth token. But two subsequent pushes to `main` produced
+no build on either project. Read access and webhook delivery are separate things: the
+first comes from OAuth, the second requires the **Vercel GitHub App to be installed on the
+repository**. A recreated repository does not inherit the old one's app installation, so
+no project linked to it receives push events, whatever its git link says.
+
+The remedy is to grant the Vercel GitHub App access to `techtig9/Busigo` — GitHub
+*Settings → Applications → Vercel → Configure*, or Vercel *Project → Settings → Git →
+Connect* — after which pushes deploy normally. Until then, deployments must be created
+explicitly (the Vercel dashboard's **Redeploy**, or `vercel --prod` from a checkout);
+`git push` alone will do nothing.
 
 **Paused projects** produce the same silent symptom for a different reason: a paused
 project keeps serving its last deployment but stops building on push. Check both before
@@ -105,11 +118,14 @@ auth guard is not running, which is a security problem, not a cosmetic one.
 
 ## Live reference deployment
 
-`busigo-preview` (project `prj_SYyuqDHs2daIXODH79EZoJ4y7tSF`) builds `main` on every push
-and runs with **no environment variables at all**, on purpose — it is the continuously
+`busigo-preview` (project `prj_SYyuqDHs2daIXODH79EZoJ4y7tSF`) is built from `main` and
+runs with **no environment variables at all**, on purpose — it is the continuously
 verified proof that the "nothing configured" row of the table above behaves as described.
 
 - https://busigo-preview.vercel.app
+
+It does not yet rebuild on push, for the GitHub App reason above; it currently serves
+`d9753c5`. Once the app is installed on the repository it will track `main` on its own.
 
 Verified on the live deployment: `/dashboard` serves the login page with the
 "no database connected" notice and `x-matched-path: /login`, so the auth guard runs in
