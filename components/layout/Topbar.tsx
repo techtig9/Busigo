@@ -10,6 +10,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { Menu, MenuItem, MenuLabel, MenuSeparator, Popover } from "@/components/ui/Menu";
 import { Avatar } from "@/components/ui/Controls";
 import { IconButton } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 import { CommandPaletteTrigger } from "./CommandPalette";
 import { SidebarNav } from "./Sidebar";
 import { WorkspaceSwitcher, type WorkspaceOption } from "@/components/dashboard/WorkspaceSwitcher";
@@ -42,18 +43,48 @@ export function Topbar({
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [items, setItems] = useState(notifications);
   const [, startTransition] = useTransition();
+  const toast = useToast();
 
   const unreadCount = items.filter((n) => !n.read).length;
 
-  const markAll = () => {
-    setItems((prev) => prev.map((n) => ({ ...n, read: true })));
-    startTransition(() => markAllNotificationsReadAction());
+  // Both of these update the list optimistically and then call the server. Previously neither
+  // handled a rejection: the action was fired and forgotten inside the transition, so if the
+  // write failed the badge still went to zero and the notifications still looked read, while
+  // the database said otherwise. The next page load brought them all back with no explanation.
+  // A failed write now puts the list back the way it was and says so.
+  const runOptimistic = (
+    optimistic: (prev: NotificationItem[]) => NotificationItem[],
+    action: () => Promise<void>,
+    failureMessage: string
+  ) => {
+    let previous: NotificationItem[] = [];
+    setItems((prev) => {
+      previous = prev;
+      return optimistic(prev);
+    });
+    startTransition(async () => {
+      try {
+        await action();
+      } catch {
+        setItems(previous);
+        toast.push(failureMessage, "error");
+      }
+    });
   };
 
-  const markOne = (id: string) => {
-    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, read: true } : item)));
-    startTransition(() => markNotificationReadAction(id));
-  };
+  const markAll = () =>
+    runOptimistic(
+      (prev) => prev.map((n) => ({ ...n, read: true })),
+      () => markAllNotificationsReadAction(),
+      "Could not mark notifications as read."
+    );
+
+  const markOne = (id: string) =>
+    runOptimistic(
+      (prev) => prev.map((item) => (item.id === id ? { ...item, read: true } : item)),
+      () => markNotificationReadAction(id),
+      "Could not mark that notification as read."
+    );
 
   return (
     <header className="sticky top-0 z-40 flex h-14 shrink-0 items-center gap-2 border-b border-hairline bg-panel/95 px-3 backdrop-blur sm:px-4">

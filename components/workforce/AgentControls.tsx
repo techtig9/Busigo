@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Controls";
+import { useToast } from "@/components/ui/Toast";
+import { AlertTriangle } from "lucide-react";
 
 const CAPABILITIES: [string, string][] = [
   ["read", "business_data"],
@@ -42,7 +44,7 @@ export function AgentControls({
 }: {
   agent: { id: string };
   permissions: any[];
-  saveAction: (formData: FormData) => void;
+  saveAction: (formData: FormData) => void | Promise<void>;
   startOpen?: boolean;
 }) {
   const initial: PermissionRow[] = CAPABILITIES.map(([capability, resource]) => {
@@ -58,6 +60,29 @@ export function AgentControls({
   const [rows, setRows] = useState(initial);
   const [open, setOpen] = useState(startOpen);
 
+  // The form previously posted straight to the server action with no feedback of any kind:
+  // the button stayed live so the grid could be submitted repeatedly, and a save that failed
+  // -- the action throws on a database error -- looked exactly like one that succeeded. These
+  // are agent permissions; believing a denied capability was saved when it was not is the
+  // kind of mistake this screen exists to prevent.
+  const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
+
+  const submit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    setError(null);
+    startTransition(async () => {
+      try {
+        await saveAction(formData);
+        toast.push("Permissions saved.");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Could not save permissions. Please try again.");
+      }
+    });
+  };
+
   const update = (i: number, key: "allowed" | "requires_approval", value: boolean) =>
     setRows((r) => r.map((x, j) => (j === i ? { ...x, [key]: value } : x)));
 
@@ -70,7 +95,7 @@ export function AgentControls({
       )}
 
       {open && (
-        <form action={saveAction} className={startOpen ? "space-y-3" : "mt-4 space-y-3 rounded-lg border border-hairline bg-surface p-4"}>
+        <form onSubmit={submit} className={startOpen ? "space-y-3" : "mt-4 space-y-3 rounded-lg border border-hairline bg-surface p-4"}>
           <input type="hidden" name="agent_id" value={agent.id} />
           <input type="hidden" name="permissions" value={JSON.stringify(rows)} />
 
@@ -100,7 +125,17 @@ export function AgentControls({
             ))}
           </div>
 
-          <Button type="submit" size="sm">
+          {error && (
+            <p
+              role="alert"
+              className="flex items-start gap-2 rounded-lg border border-danger/30 bg-danger-soft px-3 py-2 text-sm text-ink"
+            >
+              <AlertTriangle size={15} className="mt-0.5 shrink-0 text-danger-ink" aria-hidden="true" />
+              {error}
+            </p>
+          )}
+
+          <Button type="submit" size="sm" loading={pending} disabled={pending}>
             Save permissions
           </Button>
         </form>
