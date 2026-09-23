@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { buildAuthorizationUrl, createOAuthState, isOAuthProvider } from "@/lib/integrations/oauth";
+import { originFromRequest } from "@/lib/http/origin";
 
 export async function GET(request: Request) {
   const supabase = createServerSupabase();
@@ -8,6 +9,6 @@ export async function GET(request: Request) {
   if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   const provider = new URL(request.url).searchParams.get("provider") || "";
   if (!isOAuthProvider(provider)) return NextResponse.json({ error: "Unsupported OAuth provider" }, { status: 400 });
-  try { return NextResponse.redirect(buildAuthorizationUrl(provider, createOAuthState(user.id, provider))); }
+  try { return NextResponse.redirect(buildAuthorizationUrl(provider, createOAuthState(user.id, provider), originFromRequest(request))); }
   catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "OAuth configuration error" }, { status: 503 }); }
 }

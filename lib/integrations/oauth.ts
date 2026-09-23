@@ -33,13 +33,15 @@ export function verifyOAuthState(state: string) {
   return data;
 }
 
-export function oauthRedirectUri() { return `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/api/integrations/oauth/callback`; }
-export function buildAuthorizationUrl(provider: OAuthProvider, state: string) {
+// The redirect_uri must be byte-identical at authorize time and at token-exchange time, or
+// the provider rejects the exchange -- so both call sites derive it from the same origin.
+export function oauthRedirectUri(origin: string) { return `${origin}/api/integrations/oauth/callback`; }
+export function buildAuthorizationUrl(provider: OAuthProvider, state: string, origin: string) {
   const c = configs[provider];
   if (!c.clientId) throw new Error(`${provider} OAuth client is not configured.`);
   const url = new URL(c.auth);
   url.searchParams.set("client_id", c.clientId);
-  url.searchParams.set("redirect_uri", oauthRedirectUri());
+  url.searchParams.set("redirect_uri", oauthRedirectUri(origin));
   url.searchParams.set("response_type", "code");
   url.searchParams.set("state", state);
   url.searchParams.set("scope", c.scopes.join(" "));
@@ -47,10 +49,10 @@ export function buildAuthorizationUrl(provider: OAuthProvider, state: string) {
   return url.toString();
 }
 
-export async function exchangeCode(provider: OAuthProvider, code: string) {
+export async function exchangeCode(provider: OAuthProvider, code: string, origin: string) {
   const c = configs[provider];
   if (!c.clientId || !c.clientSecret) throw new Error(`${provider} OAuth credentials are not configured.`);
-  const params = new URLSearchParams({ client_id: c.clientId, client_secret: c.clientSecret, code, redirect_uri: oauthRedirectUri(), grant_type: "authorization_code" });
+  const params = new URLSearchParams({ client_id: c.clientId, client_secret: c.clientSecret, code, redirect_uri: oauthRedirectUri(origin), grant_type: "authorization_code" });
   const response = await fetch(c.token, { method: "POST", headers: { "content-type": "application/x-www-form-urlencoded", accept: "application/json" }, body: params });
   const data = await response.json();
   if (!response.ok) throw new Error(data.error_description || data.error || `OAuth exchange failed for ${provider}.`);

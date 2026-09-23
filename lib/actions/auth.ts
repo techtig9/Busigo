@@ -1,5 +1,7 @@
 "use server";
 
+import { siteOrigin } from "@/lib/http/origin";
+
 import { createServerSupabase, createServiceRoleSupabase } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
@@ -35,7 +37,7 @@ export async function signUpAction(formData: FormData): Promise<ActionResult> {
     password,
     options: {
       data: { name },
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback`,
+      emailRedirectTo: `${siteOrigin()}/auth/callback`,
     },
   });
 
@@ -103,7 +105,7 @@ export async function signInWithGoogleAction() {
   const supabase = createServerSupabase();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
-    options: { redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/auth/callback` },
+    options: { redirectTo: `${siteOrigin()}/auth/callback` },
   });
   if (error || !data.url) return;
   redirect(data.url);
@@ -124,7 +126,7 @@ export async function requestPasswordResetAction(formData: FormData): Promise<Ac
 
   const supabase = createServerSupabase();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || ""}/reset-password`,
+    redirectTo: `${siteOrigin()}/reset-password`,
   });
   if (error) return { error: error.message };
   return {};
