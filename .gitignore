@@ -1,7 +1,16 @@
 node_modules
 .next
+dist
+out
+
+# Every local env file. The previous list named only .env and .env.local, so a
+# .env.production or .env.development.local would have been committed.
 .env
-.env.local
+.env.*
+!.env.example
+
+.vercel
+*.zip
 *.log
 .DS_Store
 tsconfig.tsbuildinfo

@@ -1,63 +1,111 @@
-# busigo
+# BusiGo
 
-Trustworthy workflow automation — trigger, sequence, and traceable runs. Built for Techtig.
+An AI business operating system. BusiGo learns how a business works, finds what is worth
+automating, builds the automations as visual workflows, coordinates AI agents to run them, and
+keeps a human in control of every decision that matters.
 
-This repo implements Phases 1.1–1.10 of the one-day build spec. It was written by hand in a
-sandboxed environment with no network access, so **it has not been run against a live Next.js
-dev server or a real Supabase project** — there may be a small integration issue or two once
-it meets real infrastructure. Follow the setup steps below, and if `npm run dev` or
-`npm run build` surfaces an error, it's almost certainly a quick fix (a typo, an import path,
-or a package version mismatch) rather than a structural problem — the architecture, schema,
-and business logic have been thought through end-to-end.
+Built by Techtig.
+
+## Stack
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Framework | Next.js 14 App Router, TypeScript | Server-first rendering and Server Actions keep data access on the server, so the browser never holds a privileged key. |
+| Styling | Tailwind CSS over CSS-variable tokens | One class flips the whole theme; `rgb(var(--token) / <alpha-value>)` keeps opacity modifiers working through the indirection. |
+| UI primitives | Radix UI | Focus trapping, keyboard interaction and ARIA wiring that are wrong far more often than they look when hand-rolled. |
+| Data & auth | Supabase (Postgres, RLS) | Tenancy is enforced in the database, not only in the application — 108 tables, RLS on all of them. |
+| Canvas | React Flow (`@xyflow/react`) | The workflow builder. |
+| Charts | Recharts | |
+| Billing | Paddle | Merchant of record, so VAT/sales tax is handled rather than built. |
+| Email | Resend | |
+| AI | Groq → Cerebras → OpenRouter → Anthropic | Failover on rate-limit and quota responses only, never on a configuration error or a bad request, so a genuine failure surfaces instead of being masked. |
 
 ## Setup
 
 ```bash
-npm install
-cp .env.example .env.local
+npm ci                      # exact lockfile install
+cp .env.example .env.local  # then fill it in
 ```
 
-Fill in `.env.local`:
+`.env.example` lists every variable the code reads, each marked REQUIRED or OPTIONAL with its
+purpose and whether it is read at build time or per request. The minimum to get past the
+marketing site is `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` and
+`SUPABASE_SERVICE_ROLE_KEY`.
 
-| Variable | Where to get it |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Supabase project settings → API |
-| `ANTHROPIC_API_KEY` | console.anthropic.com |
-| `RESEND_API_KEY` | resend.com — and verify a sending domain, then update `SENDING_DOMAIN` in `lib/engine/steps/send-email.ts` |
-| `PADDLE_API_KEY`, `PADDLE_WEBHOOK_SECRET`, `NEXT_PUBLIC_PADDLE_CLIENT_TOKEN` | Paddle dashboard → Developer Tools |
-| `NEXT_PUBLIC_PADDLE_PRICE_STARTER/GROWTH/PRO` | Paddle dashboard → Catalog, after creating the 3 prices |
-| `CRON_SECRET` | any random string you generate — used to authorize `/api/cron/tick` |
+The app degrades in stages rather than all-or-nothing. With **nothing** configured the public
+site renders normally and every authenticated route redirects to `/login?unconfigured=1` —
+nothing behind the login is ever served. Each further group of variables enables one
+capability.
 
-Then apply the database:
+### Database, in order
 
 ```bash
-# In the Supabase SQL editor, or via the CLI:
-psql < supabase/schema.sql
-psql < supabase/seed.sql
+psql < supabase/schema.sql                       # 1. base schema
+for f in supabase/migrations/*.sql; do psql < "$f"; done   # 2. migrations, filename order
+psql < supabase/seed.sql                         # 3. once, for the starter workflow templates
 ```
 
-Also set up in the Supabase dashboard (not covered by SQL):
-- **Auth → Providers → Google**: add your OAuth client ID/secret for Google sign-in.
-- **Auth → URL Configuration**: add `<your-domain>/auth/callback` as a redirect URL.
-- **Auth → Email Templates**: point the confirmation/reset links at your domain if you don't
-  want the Supabase default template.
+Migrations are timestamp-prefixed, so plain alphabetical order is correct — `supabase db push`
+does the same thing. Each is idempotent (`if not exists` throughout), so re-running the chain
+is safe. `seed.sql` is deliberately outside the chain and is applied once, by hand.
 
-Run it:
+Two things live in the Supabase dashboard rather than in SQL:
+
+- **Auth → Providers → Google** — OAuth client ID and secret, for Google sign-in.
+- **Auth → URL Configuration** — add this deployment's origin to the redirect allowlist, or
+  email confirmation links bounce.
+
+### Run
 
 ```bash
-npm run dev
+npm run dev        # development server
+npm run build      # production build
+npm start          # serve the production build
+
+npm run typecheck  # tsc --noEmit
+npm run lint       # eslint, --max-warnings=0
+npm test           # unit tests
+npm run e2e        # Playwright, against a production build
 ```
 
-Wire up a scheduler (Vercel Cron, GitHub Actions, or any external pinger) to hit
-`GET /api/cron/tick` with header `Authorization: Bearer <CRON_SECRET>` once a minute — this is
-what resumes Delay steps and fires scheduled workflows. Nothing else in the app depends on a
-long-running process, so this is the one piece of infrastructure to remember to set up outside
-of `next start`.
+## Deploying to Vercel
 
-Point your Paddle webhook (Developer Tools → Notifications) at
-`https://<your-domain>/api/webhooks/paddle`, subscribed to `subscription.created`,
-`subscription.updated`, `subscription.canceled`, `transaction.completed`, and
-`transaction.payment_failed`.
+`docs/DEPLOY_VERCEL.md` has the project settings, the required-variable list, what each level
+of configuration gets you, and the two Vercel settings that silently strand a deployment. The
+short version: framework preset Next.js, root directory `./`, build command `npm run build`,
+no `vercel.json` needed.
+
+## Project structure
+
+```
+app/
+  (public)/        marketing site, auth pages, legal — no session required
+  (dashboard)/     the product; every route behind the auth guard
+  api/             route handlers: webhooks, cron, OAuth, AI, forms
+  dev/             design-system and shell previews; notFound() in production
+components/
+  ui/              design-system primitives (Button, Input, Card, Badge, Modal, …)
+  patterns/        composites (DataTable, Metric, TrendChart, Signals)
+  layout/          Sidebar, Topbar, CommandPalette
+  workflow-builder/ canvas, step cards, panels
+  marketing/       landing-page pieces
+lib/
+  actions/         Server Actions, one module per domain
+  engine/          workflow execution: steps, graph, retry, canvas conversion
+  ai/              provider abstraction and failover
+  supabase/        client factories (browser, server, service-role)
+  pricing.ts       plans, credits, limits — pure and unit-tested
+supabase/
+  schema.sql       base schema
+  migrations/      timestamp-ordered, idempotent
+  seed.sql         starter templates, applied once
+docs/
+  DEPLOY_VERCEL.md deployment
+  design-decision.md  palette and design-system rationale
+  history/         per-phase build reports from the original build
+test/              unit tests (node:test)
+e2e/               Playwright, run against a production build
+```
 
 ## What's built
 
