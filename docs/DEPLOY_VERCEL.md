@@ -1,5 +1,36 @@
 # Deploying BusiGo to Vercel
 
+## Vercel project settings
+
+| Setting | Value |
+| --- | --- |
+| Framework preset | Next.js (auto-detected) |
+| Root directory | `./` — this is a single-app repository, not a monorepo |
+| Build command | `npm run build` (the default) |
+| Output directory | `.next` (the default) |
+| Install command | `npm ci` (the default) |
+| Node version | 20.x or newer — `package.json` declares `>=18.17.0` |
+
+No `vercel.json` is needed or present. The defaults are correct for this repository, and an
+unnecessary config file is one more thing to drift.
+
+## Required variables
+
+The smallest set that brings the whole product up:
+
+| Variable | When read | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL` | **build** | Supabase project URL. Also composes the CSP's `connect-src`. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | **build** | Public key; RLS is what protects the data. |
+| `SUPABASE_SERVICE_ROLE_KEY` | runtime | Bypasses RLS. Engine, Paddle webhook, admin panel. |
+| `NEXT_PUBLIC_SITE_URL` | runtime | Pins OAuth redirect URIs and email links to one hostname. |
+
+Everything else is optional and enables one capability at a time — AI providers, Paddle
+billing, Resend email, scheduled triggers, OAuth app connections. `.env.example` is the
+authoritative list, with each variable marked REQUIRED or OPTIONAL and noted as build-time or
+runtime.
+
+
 This is the exact procedure for standing up a BusiGo deployment on Vercel, and — just as
 importantly — what each stage of configuration actually gets you. The app is built to
 degrade in defined stages rather than either "works" or "500s", so a half-configured

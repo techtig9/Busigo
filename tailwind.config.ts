@@ -25,20 +25,43 @@ const config: Config = {
         slate: cssVar("--color-slate"), // secondary text
         muted: cssVar("--color-muted"), // tertiary/metadata text
 
+        // --- Neutral ramp (see globals.css: for charts/illustration, not product chrome) ---
+        neutral: {
+          50: cssVar("--color-neutral-50"),
+          100: cssVar("--color-neutral-100"),
+          200: cssVar("--color-neutral-200"),
+          300: cssVar("--color-neutral-300"),
+          400: cssVar("--color-neutral-400"),
+          500: cssVar("--color-neutral-500"),
+          600: cssVar("--color-neutral-600"),
+          700: cssVar("--color-neutral-700"),
+          800: cssVar("--color-neutral-800"),
+          900: cssVar("--color-neutral-900"),
+        },
+
         // --- Borders ---
         hairline: cssVar("--color-hairline"),
         "hairline-strong": cssVar("--color-hairline-strong"),
 
-        // --- Brand (violet). `primary*` are aliases so new code can use the
+        // --- Brand (navy). `primary*` are aliases so new code can use the
         // specification's vocabulary while existing `signal*` markup keeps working. ---
         signal: cssVar("--color-signal"),
         "signal-dark": cssVar("--color-signal-dark"),
         "signal-soft": cssVar("--color-signal-soft"),
         "signal-strong": cssVar("--color-signal-strong"), // fill for solid controls (see globals.css)
-        "signal-ink": cssVar("--color-signal-ink"), // violet that passes as TEXT on signal-soft
+        "signal-ink": cssVar("--color-signal-ink"), // navy that passes as TEXT on signal-soft
         primary: cssVar("--color-signal"),
         "primary-hover": cssVar("--color-signal-dark"),
         "primary-soft": cssVar("--color-signal-soft"),
+
+        // --- Brand accent (orange). BRAND ONLY — hero, CTA, pipeline motion, the mark.
+        // Never a status: measured against the status palette it is ΔE 1.84 from warn amber
+        // under protanopia and 3.68 from danger red under tritanopia, so as a state colour it
+        // would make "running" and "waiting" identical for a protanope. See globals.css. ---
+        accent: cssVar("--color-accent"), // FILL
+        "accent-strong": cssVar("--color-accent-strong"), // FILL under white text
+        "accent-ink": cssVar("--color-accent-ink"), // orange that passes as TEXT
+        "accent-soft": cssVar("--color-accent-soft"),
 
         // --- Accents ---
         pulse: cssVar("--color-pulse"), // the "live / executing" hue — FILL
@@ -63,7 +86,22 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["var(--font-sora)", "var(--font-inter)", "system-ui", "sans-serif"],
         mono: ["var(--font-plex-mono)", "ui-monospace", "monospace"],
+      },
+      // Fluid display sizes. A fixed 48px hero heading is oversized on a 375px phone and
+      // undersized on a 1920px monitor; clamp() interpolates between a floor and a ceiling
+      // against the viewport, so one class covers every breakpoint without a stack of
+      // sm:/md:/lg: overrides. The preferred term uses vw PLUS a rem constant so the text
+      // still scales when the user zooms — a pure-vw value ignores zoom and fails WCAG 1.4.4.
+      fontSize: {
+        "fluid-sm": ["clamp(0.9375rem, 0.9rem + 0.2vw, 1.0625rem)", { lineHeight: "1.6" }],
+        "fluid-base": ["clamp(1rem, 0.95rem + 0.25vw, 1.1875rem)", { lineHeight: "1.65" }],
+        "fluid-lg": ["clamp(1.125rem, 1rem + 0.6vw, 1.5rem)", { lineHeight: "1.45" }],
+        "fluid-xl": ["clamp(1.375rem, 1.15rem + 1.1vw, 2rem)", { lineHeight: "1.3" }],
+        "fluid-2xl": ["clamp(1.75rem, 1.35rem + 2vw, 2.75rem)", { lineHeight: "1.2", letterSpacing: "-0.015em" }],
+        "fluid-3xl": ["clamp(2.125rem, 1.5rem + 3.1vw, 3.75rem)", { lineHeight: "1.1", letterSpacing: "-0.02em" }],
+        "fluid-4xl": ["clamp(2.5rem, 1.6rem + 4.5vw, 5rem)", { lineHeight: "1.05", letterSpacing: "-0.025em" }],
       },
       // Spec §6 radius tiering: 12px dense data, 16px standard, 20px major hero surfaces.
       // Tailwind's own lg/xl/2xl are overridden so `rounded-lg` on an existing Card picks up

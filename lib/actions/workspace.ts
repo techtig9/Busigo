@@ -1,5 +1,7 @@
 "use server";
 
+import { siteOrigin } from "@/lib/http/origin";
+
 import { createServerSupabase, createServiceRoleSupabase } from "@/lib/supabase/server";
 import { getWorkspaceContext, listMyWorkspaces, WORKSPACE_COOKIE } from "@/lib/workspace/context";
 import { requireWorkspace, writeAuditLog } from "@/lib/workspace/authorize";
@@ -130,7 +132,7 @@ export async function inviteMemberAction(formData: FormData): Promise<ActionResu
     metadata: { email, role },
   });
 
-  const inviteUrl = `${process.env.NEXT_PUBLIC_SITE_URL || ""}/invite/${invitation.token}`;
+  const inviteUrl = `${siteOrigin()}/invite/${invitation.token}`;
   try {
     await sendAlertEmail(email, `You've been invited to join ${workspace.name} on BusiGo`, `Join here: ${inviteUrl}`);
   } catch (e: any) {

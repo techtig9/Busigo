@@ -19,6 +19,8 @@ interface ChatMessage {
   role: "user" | "assistant";
   content: string;
   evidence?: EvidenceItem[];
+  /** A failure rendered in the transcript, styled as a problem rather than as an answer. */
+  error?: boolean;
 }
 
 const DEFAULT_SUGGESTIONS = [
@@ -147,6 +149,21 @@ export function ChatWidget() {
         }
       }
 
+      // A failed request still has a body -- the JSON error payload. Without this check the
+      // loop below streamed that payload into the transcript, so a rate limit or a server
+      // error was rendered as the assistant cheerfully replying `{"error":"..."}`. Read the
+      // real message and surface it as a failure instead.
+      if (!res.ok) {
+        let detail = "";
+        try {
+          const body = await res.json();
+          detail = typeof body?.error === "string" ? body.error : "";
+        } catch {
+          // Non-JSON error body (a proxy's HTML error page, say) — the status is all we have.
+        }
+        throw new Error(detail || `Copilot request failed (${res.status}).`);
+      }
+
       if (!res.body) throw new Error("No response stream");
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
@@ -161,10 +178,11 @@ export function ChatWidget() {
           return copy;
         });
       }
-    } catch {
+    } catch (e) {
+      const message = e instanceof Error && e.message ? e.message : "Sorry — I couldn't reach the Copilot just now.";
       setMessages((m) => {
         const copy = [...m];
-        copy[copy.length - 1] = { role: "assistant", content: "Sorry — I couldn't reach the Copilot just now." };
+        copy[copy.length - 1] = { role: "assistant", content: message, error: true };
         return copy;
       });
     } finally {
@@ -238,9 +256,16 @@ export function ChatWidget() {
           {messages.map((m, i) => (
             <div key={i} className={cn("flex flex-col", m.role === "user" ? "items-end" : "items-start")}>
               <div
+                role={m.error ? "alert" : undefined}
                 className={cn(
                   "max-w-[88%] whitespace-pre-wrap rounded-xl px-3 py-2 text-sm leading-relaxed",
-                  m.role === "user" ? "bg-signal-strong text-white" : "bg-surface text-ink"
+                  m.role === "user"
+                    ? "bg-signal-strong text-white"
+                    : m.error
+                      // A failure must not look like an answer. Same bubble, but the danger
+                      // border and role="alert" mark it as a problem and announce it.
+                      ? "border border-danger/30 bg-danger-soft text-ink"
+                      : "bg-surface text-ink"
                 )}
               >
                 {m.content || (streaming && i === messages.length - 1 ? <TypingDots /> : "")}

@@ -1,15 +1,32 @@
 import type { Metadata } from "next";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
+import { Inter, Sora, IBM_Plex_Mono } from "next/font/google";
 import { ToastProvider } from "@/components/ui/Toast";
 import "./globals.css";
 
-// Inter for UI (spec §1). IBM Plex Mono is deliberately retained for code, JSON payloads,
-// run logs and identifiers — it reads well in dense traces and gives the operational
-// surfaces a distinct texture from the UI type.
+// Three faces, each with a job.
+//
+// Sora is the DISPLAY face — headings and the wordmark only. Inter alone is a competent UI
+// face but it is also the default of roughly every SaaS product shipped since 2020, so a
+// product set entirely in it has no typographic identity at all. Sora's wider apertures and
+// squarer terminals give headings a distinct voice while staying a geometric sans, so it sits
+// with Inter rather than fighting it.
+//
+// Inter remains the BODY/UI face: it is better than Sora at 13-14px in dense tables, which is
+// most of this product.
+//
+// IBM Plex Mono is deliberately retained for code, JSON payloads, run logs and identifiers —
+// it reads well in dense traces and gives the operational surfaces a distinct texture.
 const inter = Inter({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["600", "700"], // display weights only — Sora is never used for body copy
+  variable: "--font-sora",
   display: "swap",
 });
 
@@ -39,7 +56,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${plexMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${sora.variable} ${plexMono.variable}`} suppressHydrationWarning>
       <head>
         {/* Blocking (not deferred) on purpose: applies the theme class before first paint so
             there's no flash of the wrong theme. Reads localStorage synchronously, falls back

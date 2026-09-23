@@ -50,8 +50,10 @@ export async function middleware(request: NextRequest) {
   }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    // Safe without requireEnv: the guard above returns before this point when either value
+    // is absent, so by here both are known to be set.
+    process.env.NEXT_PUBLIC_SUPABASE_URL as string,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string,
     {
       cookies: {
         getAll() {

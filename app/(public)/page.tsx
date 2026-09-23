@@ -15,6 +15,7 @@ import {
   Clock,
 } from "lucide-react";
 import { APP_NAME } from "@/lib/utils";
+import { HeroPipeline } from "@/components/marketing/HeroPipeline";
 import { PLAN_PRICE_USD, PLAN_CREDITS } from "@/lib/plans";
 import { FAQS } from "@/lib/help-content";
 
@@ -172,7 +173,7 @@ function SectionHead({ eyebrow, title, body }: { eyebrow?: string; title: string
   return (
     <div className="mx-auto max-w-2xl text-center">
       {eyebrow && <p className="text-xs font-semibold uppercase tracking-wide text-signal">{eyebrow}</p>}
-      <h2 className="mt-1.5 text-2xl font-bold tracking-tight text-ink sm:text-3xl">{title}</h2>
+      <h2 className="mt-1.5 font-display text-fluid-2xl font-bold text-ink">{title}</h2>
       {body && <p className="mt-3 text-sm leading-relaxed text-slate sm:text-base">{body}</p>}
     </div>
   );
@@ -187,10 +188,10 @@ export default function LandingPage() {
       <section className="px-6 py-20 text-center sm:py-28">
         <div className="mx-auto max-w-3xl animate-slide-up">
           <p className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-panel/70 px-3 py-1 text-xs font-medium text-slate backdrop-blur">
-            <Sparkles size={12} className="text-signal" aria-hidden />
+            <Sparkles size={12} className="text-accent-ink" aria-hidden />
             AI that shows its working
           </p>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight text-ink sm:text-5xl">
+          <h1 className="mt-5 font-display text-fluid-3xl font-bold text-ink">
             Your AI Business Operating System.
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-slate sm:text-lg">
@@ -217,6 +218,8 @@ export default function LandingPage() {
             your workspace.
           </p>
         </div>
+
+        <HeroPipeline />
       </section>
 
       {/* 2 — Problem */}
@@ -261,7 +264,7 @@ export default function LandingPage() {
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-signal">Human approval</p>
-            <h2 className="mt-1.5 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+            <h2 className="mt-1.5 font-display text-fluid-2xl font-bold text-ink">
               Nothing important happens without you.
             </h2>
             <p className="mt-3 text-sm leading-relaxed text-slate">
@@ -410,7 +413,7 @@ export default function LandingPage() {
       <section className="px-6 py-20 text-center">
         <div className="mx-auto max-w-xl">
           <ShieldCheck size={22} className="mx-auto text-signal" aria-hidden />
-          <h2 className="mt-4 text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+          <h2 className="mt-4 font-display text-fluid-2xl font-bold text-ink">
             Ready to automate something real?
           </h2>
           <p className="mt-3 text-sm text-slate">
@@ -418,7 +421,9 @@ export default function LandingPage() {
           </p>
           <Link
             href="/signup"
-            className="mt-7 inline-flex h-11 items-center gap-1.5 rounded bg-signal-strong px-6 text-sm font-semibold text-white transition-all duration-hover hover:bg-signal-dark hover:shadow-md active:scale-[0.98]"
+            /* accent-strong, not accent: #F97316 under white text is 2.80:1 and fails AA.
+               #B93F08 is 5.56:1 and reads as the same brand orange at button size. */
+            className="mt-7 inline-flex h-11 items-center gap-1.5 rounded bg-accent-strong px-6 text-sm font-semibold text-white transition-all duration-hover hover:brightness-110 hover:shadow-md active:scale-[0.98]"
           >
             Create your free account
             <ArrowRight size={15} aria-hidden />

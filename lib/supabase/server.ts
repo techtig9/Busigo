@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createRawClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { requireEnv } from "@/lib/env";
 
 /**
  * Whether this deployment has Supabase credentials at all.
@@ -25,8 +26,8 @@ export function isSupabaseConfigured(): boolean {
 export function createServerSupabase() {
   const cookieStore = cookies();
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requireEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       cookies: {
         getAll() {
@@ -51,8 +52,11 @@ export function createServerSupabase() {
 // or expose SUPABASE_SERVICE_ROLE_KEY to the browser.
 export function createServiceRoleSupabase() {
   return createRawClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    requireEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    // Not covered by isSupabaseConfigured(), which only checks the two public values. A
+    // deployment with the URL and anon key but no service-role key reaches this and would
+    // otherwise fail somewhere inside the client with no mention of the missing key.
+    requireEnv("SUPABASE_SERVICE_ROLE_KEY", "Required by the execution engine, the Paddle webhook and the admin panel."),
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 }
