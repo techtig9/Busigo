@@ -477,3 +477,73 @@ verification of every animation.
 3. **Palette confirmation** — moving from navy `#2B3A67` to violet `#6D4AFF` is the most
    visible single change in the redesign and is the one decision that is expensive to reverse
    once ~40 screens are built on it.
+
+
+---
+
+# Revision — navy + orange (Phase 3)
+
+The spec assigns busigo **navy + orange accent, animated workflow pipeline**, and requires
+each product to have its own palette. That supersedes the violet decision recorded above.
+The whole palette lives in CSS variables, so this was a token change, not a rewrite.
+
+## What the measurements decided
+
+Colours were computed against the real surfaces, not chosen by eye. Full script in the
+session scratchpad; results:
+
+**Navy primary** `#1B3A6B` — 11.27:1 under white text as a button fill, 9.96:1 as text on
+the tinted ground. Dark mode needs its own values: `#1B3A6B` is 1.6:1 against the dark
+canvas, so the ramp lifts to `#8FB3F0` for text and `#2A569C` for fills under white (4.96:1).
+
+**Orange is a brand colour only, never a status.** This is the one place the spec's
+direction collided with the product, and the measurement is unambiguous:
+
+| pair | normal | deutan | protan | tritan | worst |
+| --- | --- | --- | --- | --- | --- |
+| accent orange vs warn amber | 10.94 | 3.01 | **1.84** | 6.26 | **1.84** |
+| accent orange vs danger red | 10.09 | 6.51 | 7.03 | **3.68** | **3.68** |
+| accent-ink vs danger-ink | 3.59 | 2.53 | 2.30 | **2.02** | **2.02** |
+
+The floor is ΔE 6.0. The `pulse` token is not decorative — `statusTone()` maps
+`running`/`in_progress` to it, directly alongside `warn` for `waiting`/`pending` and `danger`
+for `failed`. Recolouring `pulse` orange would have made a running workflow and a waiting one
+the same colour for a protanope, on the screen this product exists to show.
+
+So the palette splits the two roles:
+
+- `--color-signal*` → navy. The primary: buttons, links, focus rings, selected state.
+- `--color-accent*` → orange. Brand only: the hero pipeline, the final CTA, the eyebrow mark.
+  Deliberately absent from the `Tone` union in `components/ui/Badge.tsx`, so it cannot be
+  used as a status by accident.
+- `--color-pulse*` → stays cyan. The "running" status, kept cyan precisely because of the
+  numbers above.
+
+Status tones already pair every colour with a distinct icon and the status text
+(`StatusBadge`), so hue is redundant there and WCAG 1.4.1 holds regardless of ΔE. Two
+pre-existing pairs sit under the 6.0 floor on hue alone — warn amber vs danger red (4.73) and
+running cyan vs info blue (1.05) — and are mitigated by that icon pairing rather than by
+churning a status palette that is out of scope for a re-palette.
+
+`accent-strong` `#B93F08` exists because the brand orange `#F97316` under white text is
+2.80:1 and fails AA outright. The CTA uses the former and reads as the same orange at button
+size.
+
+## Also in this phase
+
+- **Display face.** Sora for headings and the wordmark; Inter stays the body/UI face because
+  it is better at 13–14px in dense tables, which is most of this product. Inter alone is the
+  default of nearly every SaaS product shipped since 2020 and gives no typographic identity.
+- **Fluid type.** `text-fluid-sm` … `text-fluid-4xl` on `clamp()`, replacing stacks of
+  `sm:`/`md:` overrides. Each preferred term is `rem + vw`, never pure `vw`, so the text still
+  responds to browser zoom — a pure-vw value ignores zoom and fails WCAG 1.4.4.
+- **9-step neutral ramp**, light and dark. For charts, illustration and skeletons; product
+  chrome keeps the semantic surface tokens, which carry meaning and flip with the theme.
+- **Hero workflow pipeline.** A Server Component costing no JavaScript: pure CSS keyframes on
+  staggered delays, animating transform and opacity only. Collapses to a static lit diagram
+  under `prefers-reduced-motion` rather than freezing half-drawn, and carries a real sentence
+  for screen readers instead of five disconnected words.
+
+Component inventory was already complete against the spec's list — Button, Input/Select/
+Textarea, Card, Badge, Tabs, Modal, Drawer, Toast, Tooltip, Skeleton, EmptyState, DataTable,
+Avatar, Progress, Sidebar, Topbar, Footer all exist — so nothing new was needed there.

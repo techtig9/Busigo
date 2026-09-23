@@ -34,7 +34,7 @@ button:focus-visible,
    The comment on each line maps it to the specification's semantic name.
 
    Light is the primary showcase (spec §20); dark is a parallel palette engineered for the
-   violet brand, not a mechanical inversion.
+   navy brand, not a mechanical inversion.
 --------------------------------------------------------------------------------------- */
 :root {
   /* Surfaces */
@@ -51,19 +51,51 @@ button:focus-visible,
                                          #EEF1F7; #6B7488 passed on white but not on the
                                          tinted surfaces it actually sits on. */
 
+  /* Neutral ramp — 9 steps.
+     The semantic tokens above (canvas/panel/surface/ink/slate/muted/hairline) are what
+     product code should use, because they flip with the theme and carry meaning. This ramp
+     exists for the cases those cannot express: a chart's gridlines needing a specific step,
+     an illustration, a skeleton's two-tone shimmer. Steps are spaced by roughly even
+     perceptual lightness rather than even hex, so adjacent steps read as one increment. */
+  --color-neutral-50: 248 249 252;    /* #F8F9FC */
+  --color-neutral-100: 240 242 247;   /* #F0F2F7 */
+  --color-neutral-200: 226 230 238;   /* #E2E6EE */
+  --color-neutral-300: 203 209 222;   /* #CBD1DE */
+  --color-neutral-400: 156 165 184;   /* #9CA5B8 */
+  --color-neutral-500: 113 123 145;   /* #717B91 */
+  --color-neutral-600: 84 93 113;     /* #545D71 */
+  --color-neutral-700: 60 68 86;      /* #3C4456 */
+  --color-neutral-800: 38 45 61;      /* #262D3D */
+  --color-neutral-900: 23 32 51;      /* #172033 */
+
   /* Borders */
   --color-hairline: 228 232 240;      /* #E4E8F0 — spec --border */
   --color-hairline-strong: 215 220 231; /* #D7DCE7 — spec --border-strong */
 
-  /* Brand — violet primary (spec §1) */
-  --color-signal: 109 74 255;         /* #6D4AFF — spec --primary */
-  --color-signal-dark: 91 59 234;     /* #5B3BEA — spec --primary-hover */
-  --color-signal-soft: 240 236 255;   /* #F0ECFF — spec --primary-soft */
-  --color-signal-strong: 109 74 255;  /* #6D4AFF — fill for solid controls; white text is 5.15:1 */
-  --color-signal-ink: 91 59 234;      /* #5B3BEA — TEXT on signal-soft (5.57:1) */
+  /* Brand — navy primary. BusiGo automates a business's operations; the palette is
+     deliberately institutional rather than the violet every AI product now uses. */
+  --color-signal: 27 58 107;          /* #1B3A6B — primary */
+  --color-signal-dark: 20 46 87;      /* #142E57 — primary-hover, goes darker on light */
+  --color-signal-soft: 234 240 250;   /* #EAF0FA — tinted ground for navy text */
+  --color-signal-strong: 27 58 107;   /* #1B3A6B — fill for solid controls; white text is 11.27:1 */
+  --color-signal-ink: 27 58 107;      /* #1B3A6B — TEXT on signal-soft (9.96:1) */
+
+  /* Brand accent — orange. BRAND ONLY: hero, CTA, the workflow-pipeline motion, the mark.
+     It is deliberately absent from the status Tone union in components/ui/Badge.tsx. Measured
+     against the status palette, orange #F97316 separates from warn amber by ΔE 1.84 under
+     protanopia and from danger red by 3.68 under tritanopia — far under the 6.0 floor. Used
+     as a status it would make "running" and "waiting" the same colour for a protanope, in a
+     product whose main screen is a list of run statuses. As a brand colour, always paired
+     with text and never encoding state, that collision cannot arise. */
+  --color-accent: 249 115 22;         /* #F97316 — FILL only (hero, pipeline, illustration) */
+  --color-accent-strong: 185 63 8;    /* #B93F08 — fill UNDER white text (5.56:1) */
+  --color-accent-ink: 168 56 10;      /* #A8380A — TEXT on light surfaces (5.74:1 worst) */
+  --color-accent-soft: 255 241 232;   /* #FFF1E8 — tinted ground for accent text */
 
   /* Accents */
-  --color-pulse: 32 184 216;          /* #20B8D8 — spec --accent-cyan, FILL only */
+  --color-pulse: 32 184 216;          /* #20B8D8 — cyan. STATUS: "running". Kept cyan rather
+                                         than moved to the brand orange precisely because of
+                                         the separation measured above. */
   --color-pulse-ink: 15 107 126;      /* #0F6B7E — TEXT. Cyan is inherently light: #20B8D8
                                          as text was 2.36:1 on white. */
   --color-accent-blue: 77 124 254;    /* #4D7CFE — spec --accent-blue */
@@ -115,17 +147,38 @@ button:focus-visible,
   --color-muted: 139 149 167;         /* #8B95A7 — 5.51:1 on the dark panel; the
                                          original #7A8498 was 4.42:1 and just failed AA. */
 
+  /* Neutral ramp, inverted for dark. Not a mechanical reversal of the light ramp: the dark
+     canvas is a desaturated navy rather than black, so the low steps carry the same hue to
+     avoid a grey/blue clash where the ramp meets the surfaces. */
+  --color-neutral-50: 20 25 38;       /* #141926 */
+  --color-neutral-100: 28 34 50;      /* #1C2232 */
+  --color-neutral-200: 40 48 68;      /* #283044 */
+  --color-neutral-300: 57 67 90;      /* #39435A */
+  --color-neutral-400: 89 100 124;    /* #59647C */
+  --color-neutral-500: 124 135 158;   /* #7C879E */
+  --color-neutral-600: 156 166 186;   /* #9CA6BA */
+  --color-neutral-700: 190 198 213;   /* #BEC6D5 */
+  --color-neutral-800: 219 224 234;   /* #DBE0EA */
+  --color-neutral-900: 237 239 243;   /* #EDEFF3 */
+
   --color-hairline: 43 51 71;         /* #2B3347 */
   --color-hairline-strong: 58 68 92;  /* #3A445C */
 
-  /* Violet lifted for contrast on a dark ground; hover goes LIGHTER, not darker. */
-  --color-signal: 139 110 255;        /* #8B6EFF */
-  --color-signal-dark: 161 139 255;   /* #A18BFF */
-  --color-signal-soft: 38 32 66;      /* #262042 */
-  --color-signal-strong: 109 74 255;  /* #6D4AFF — deliberately NOT the lifted #8B6EFF:
-                                         white on that is 3.64:1 and fails AA. */
-  --color-signal-ink: 161 139 255;    /* #A18BFF — TEXT on the dark signal-soft (5.60:1);
-                                         #8B6EFF there was 4.22:1. */
+  /* Navy lifted for contrast on a dark ground; hover goes LIGHTER, not darker. The #1B3A6B
+     used in light mode is 1.6:1 against the dark canvas — invisible — so dark mode needs its
+     own value rather than a mechanical inversion. */
+  --color-signal: 143 179 240;        /* #8FB3F0 */
+  --color-signal-dark: 178 204 248;   /* #B2CCF8 — hover goes lighter on dark */
+  --color-signal-soft: 26 38 61;      /* #1A263D */
+  --color-signal-strong: 42 86 156;   /* #2A569C — fill under white text (4.96:1). NOT the
+                                         lifted #8FB3F0: white on that is 1.9:1. */
+  --color-signal-ink: 143 179 240;    /* #8FB3F0 — TEXT on the dark signal-soft (7.19:1) */
+
+  /* Brand accent on dark. Same brand-only rule as light mode. */
+  --color-accent: 255 138 76;         /* #FF8A4C — FILL */
+  --color-accent-strong: 185 63 8;    /* #B93F08 — fill under white text, unchanged (5.56:1) */
+  --color-accent-ink: 255 154 92;     /* #FF9A5C — TEXT on dark surfaces (7.30:1) */
+  --color-accent-soft: 46 28 18;      /* #2E1C12 */
 
   --color-pulse: 61 208 238;          /* #3DD0EE */
   --color-pulse-ink: 61 208 238;      /* 7.59:1 on dark surfaces */
@@ -382,4 +435,48 @@ li > a:not(.no-underline) {
 .cmd-item[data-disabled="true"] {
   opacity: 0.5;
   pointer-events: none;
+}
+
+
+/* ---------------------------------------------------------------------------------------
+   Hero workflow pipeline (components/marketing/HeroPipeline.tsx)
+
+   The product's one-line story is "a trigger arrives, steps run in order, a human approves
+   the ones that matter". The hero animates exactly that rather than showing a screenshot.
+
+   Built from CSS keyframes on staggered animation-delays rather than JS timers: no state, no
+   re-render, no hydration cost, and the browser can run it off the main thread. Only
+   transform and opacity are animated, so it never triggers layout or paint.
+
+   Every animation here is inside the reduced-motion guard at the top of this file, which
+   sets animation-duration to near-zero globally. That leaves the pipeline rendered in its
+   final, fully-lit state — a static diagram — rather than a frozen half-drawn one.
+--------------------------------------------------------------------------------------- */
+
+@keyframes pipeline-node {
+  /* Idle, then lit as the pulse arrives, then settling back. Scale is kept tiny (1.06) so a
+     node growing does not nudge its neighbours — the grid track is fixed, so there is no
+     reflow either way, but a large scale would read as a jump. */
+  0%, 12%   { opacity: 0.45; transform: scale(1); }
+  18%, 32%  { opacity: 1;    transform: scale(1.06); }
+  45%, 100% { opacity: 0.75; transform: scale(1); }
+}
+
+@keyframes pipeline-flow {
+  /* The travelling highlight along a connector. scaleX from the left edge reads as the
+     connection being drawn, which is the thing being described. */
+  0%, 10%   { transform: scaleX(0); opacity: 0; }
+  20%       { opacity: 1; }
+  40%, 100% { transform: scaleX(1); opacity: 1; }
+}
+
+.pipeline-node {
+  animation: pipeline-node 6s var(--ease-out) infinite;
+  will-change: transform, opacity;
+}
+
+.pipeline-flow {
+  transform-origin: left center;
+  animation: pipeline-flow 6s var(--ease-out) infinite;
+  will-change: transform, opacity;
 }
